@@ -53,6 +53,7 @@ Thumbs.db
 # Local data, models, and experiment output
 data/
 datasets/
+mnist-png/
 models/
 checkpoints/
 runs/
@@ -68,4 +69,3 @@ tmp/
 temp/
 *.tmp
 *.bak
-
