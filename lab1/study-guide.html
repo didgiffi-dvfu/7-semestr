@@ -1,0 +1,1610 @@
+<title>MLP Экзопланеты — Шпаргалка</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: single-column reading flow, collapsible sections, sticky nav */
+:root {
+  --bg: #fafaf9;
+  --bg-card: #ffffff;
+  --fg: #1c1917;
+  --fg-dim: #57534e;
+  --accent: #6d28d9;
+  --accent-light: #ede9fe;
+  --border: #e7e5e4;
+  --code-bg: #f5f3ff;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #2563eb;
+  --node-input: #dbeafe;
+  --node-hidden: #fce7f3;
+  --node-output: #d1fae5;
+  --node-loss: #fef3c7;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1a1f;
+    --bg-card: #232328;
+    --fg: #e8e6e3;
+    --fg-dim: #a8a29e;
+    --accent: #a78bfa;
+    --accent-light: #2e1065;
+    --border: #3a3a42;
+    --code-bg: #2a2040;
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --info: #60a5fa;
+    --node-input: #1e3a5f;
+    --node-hidden: #4a1942;
+    --node-output: #1a3d2e;
+    --node-loss: #3d3515;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1a1f;
+  --bg-card: #232328;
+  --fg: #e8e6e3;
+  --fg-dim: #a8a29e;
+  --accent: #a78bfa;
+  --accent-light: #2e1065;
+  --border: #3a3a42;
+  --code-bg: #2a2040;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #60a5fa;
+  --node-input: #1e3a5f;
+  --node-hidden: #4a1942;
+  --node-output: #1a3d2e;
+  --node-loss: #3d3515;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+h1 { font-size: 1.8rem; font-weight: 700; margin: 1.5em 0 0.3em; text-wrap: balance; }
+h2 { font-size: 1.35rem; font-weight: 700; margin: 2em 0 0.4em; border-bottom: 2px solid var(--accent); padding-bottom: 0.3em; text-wrap: balance; }
+h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5em 0 0.3em; color: var(--accent); }
+p { margin: 0.6em 0; }
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  line-height: 1.5;
+  margin: 0.8em 0;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2em;
+  margin: 1em 0;
+}
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15em 0.6em;
+  border-radius: 99px;
+  margin-right: 0.3em;
+}
+.badge-green { background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }
+.badge-yellow { background: color-mix(in srgb, var(--warning) 15%, transparent); color: var(--warning); }
+.badge-red { background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }
+.badge-blue { background: color-mix(in srgb, var(--info) 15%, transparent); color: var(--info); }
+.badge-accent { background: var(--accent-light); color: var(--accent); }
+
+.nav-bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6em 0;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  margin-bottom: 1em;
+}
+.nav-bar a {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 0.25em 0.7em;
+  border-radius: 6px;
+  background: var(--accent-light);
+  white-space: nowrap;
+}
+.nav-bar a:hover { text-decoration: underline; }
+
+.formula-box {
+  background: var(--code-bg);
+  border-left: 3px solid var(--accent);
+  padding: 0.8em 1em;
+  border-radius: 0 8px 8px 0;
+  margin: 0.8em 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  overflow-x: auto;
+}
+.why-box {
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+  border-left: 3px solid var(--warning);
+  padding: 0.8em 1em;
+  border-radius: 0 8px 8px 0;
+  margin: 0.8em 0;
+}
+.why-box strong { color: var(--warning); }
+.tip-box {
+  background: color-mix(in srgb, var(--success) 8%, transparent);
+  border-left: 3px solid var(--success);
+  padding: 0.8em 1em;
+  border-radius: 0 8px 8px 0;
+  margin: 0.8em 0;
+}
+.tip-box strong { color: var(--success); }
+
+details {
+  margin: 0.5em 0;
+}
+details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 0.4em 0;
+  user-select: none;
+  list-style: none;
+}
+details summary::before {
+  content: '+ ';
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+details[open] summary::before { content: '- '; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 0.5em 0.7em;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  font-weight: 600;
+  color: var(--fg-dim);
+  font-size: 0.82em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+svg text { font-family: 'Inter', sans-serif; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
+@media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.act-card { text-align: center; }
+.act-card .formula { font-family: 'JetBrains Mono', monospace; font-size: 0.82em; margin: 0.3em 0; }
+.act-card .pros { color: var(--success); font-size: 0.85em; }
+.act-card .cons { color: var(--danger); font-size: 0.85em; }
+</style>
+
+<nav class="nav-bar">
+  <a href="#pipeline">Pipeline</a>
+  <a href="#data">Данные</a>
+  <a href="#preprocess">Предобработка</a>
+  <a href="#mlp">Архитектура MLP</a>
+  <a href="#forward">Forward Pass</a>
+  <a href="#backprop">Backpropagation</a>
+  <a href="#vectorization">Векторизация</a>
+  <a href="#activations">Функции активации</a>
+  <a href="#training">Обучение</a>
+  <a href="#metrics">Метрики</a>
+  <a href="#architectures">Архитектуры</a>
+  <a href="#faq">FAQ</a>
+</nav>
+
+<h1>MLP: Классификация экзопланет</h1>
+<p style="color:var(--fg-dim); margin-bottom: 2em">
+  Шпаргалка для защиты лабораторной работы. Каждый раздел объясняет <strong>что</strong> делает код, <strong>зачем</strong> и <strong>почему именно так</strong>.
+</p>
+
+<!-- ═══════════════ PIPELINE OVERVIEW ═══════════════ -->
+<h2 id="pipeline">Общий пайплайн работы</h2>
+
+<svg viewBox="0 0 820 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:820px;margin:1em auto;display:block">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <rect x="2" y="30" width="110" height="56" rx="8" fill="var(--node-input)" stroke="var(--border)"/>
+  <text x="57" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">CSV-данные</text>
+  <text x="57" y="72" text-anchor="middle" font-size="9" fill="var(--fg-dim)">6445 строк</text>
+
+  <line x1="115" y1="58" x2="148" y2="58" stroke="var(--accent)" marker-end="url(#arr)"/>
+
+  <rect x="150" y="30" width="110" height="56" rx="8" fill="var(--node-input)" stroke="var(--border)"/>
+  <text x="205" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">Очистка +</text>
+  <text x="205" y="68" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">сэмплинг</text>
+  <text x="205" y="82" text-anchor="middle" font-size="9" fill="var(--fg-dim)">1024 объекта</text>
+
+  <line x1="263" y1="58" x2="296" y2="58" stroke="var(--accent)" marker-end="url(#arr)"/>
+
+  <rect x="298" y="30" width="110" height="56" rx="8" fill="var(--node-hidden)" stroke="var(--border)"/>
+  <text x="353" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">Split + Scale</text>
+  <text x="353" y="68" text-anchor="middle" font-size="9" fill="var(--fg-dim)">60/20/20%</text>
+  <text x="353" y="82" text-anchor="middle" font-size="9" fill="var(--fg-dim)">StandardScaler</text>
+
+  <line x1="411" y1="58" x2="444" y2="58" stroke="var(--accent)" marker-end="url(#arr)"/>
+
+  <rect x="446" y="30" width="110" height="56" rx="8" fill="var(--node-hidden)" stroke="var(--border)"/>
+  <text x="501" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">MLP [64,32]</text>
+  <text x="501" y="68" text-anchor="middle" font-size="9" fill="var(--fg-dim)">PyTorch</text>
+  <text x="501" y="82" text-anchor="middle" font-size="9" fill="var(--fg-dim)">100 эпох</text>
+
+  <line x1="559" y1="58" x2="592" y2="58" stroke="var(--accent)" marker-end="url(#arr)"/>
+
+  <rect x="594" y="30" width="110" height="56" rx="8" fill="var(--node-output)" stroke="var(--border)"/>
+  <text x="649" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">Оценка</text>
+  <text x="649" y="68" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Acc, F1, AUC</text>
+  <text x="649" y="82" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Confusion Matrix</text>
+
+  <line x1="707" y1="58" x2="740" y2="58" stroke="var(--accent)" marker-end="url(#arr)"/>
+
+  <rect x="742" y="30" width="74" height="56" rx="8" fill="var(--node-loss)" stroke="var(--border)"/>
+  <text x="779" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">Анализ</text>
+  <text x="779" y="72" text-anchor="middle" font-size="9" fill="var(--fg-dim)">6 архитектур</text>
+</svg>
+
+<!-- ═══════════════ DATA ═══════════════ -->
+<h2 id="data">1. Данные: что и откуда</h2>
+
+<div class="card">
+<p><strong>Датасет:</strong> NASA Exoplanet Archive — 6445 подтверждённых экзопланет. После удаления пропусков и ограничения — <strong>1024 объекта</strong>.</p>
+
+<h3>4 входных признака</h3>
+<table>
+  <tr><th>Признак</th><th>Что это</th><th>Пример</th></tr>
+  <tr><td><code>st_teff</code></td><td>Температура звезды-хоста (K)</td><td>5400 K</td></tr>
+  <tr><td><code>st_mass</code></td><td>Масса звезды (в массах Солнца)</td><td>0.92</td></tr>
+  <tr><td><code>st_met</code></td><td>Металличность звезды (dex)</td><td>0.13</td></tr>
+  <tr><td><code>pl_orbper</code></td><td>Орбитальный период планеты (дни)</td><td>1684 дней</td></tr>
+</table>
+
+<h3>5 классов (целевая переменная)</h3>
+<table>
+  <tr><th>Класс</th><th>Описание</th><th>Кол-во</th><th>Доля</th></tr>
+  <tr><td><span class="badge badge-blue">sub_neptune_mini_gas</span></td><td>Мини-нептун</td><td>330</td><td>32.2%</td></tr>
+  <tr><td><span class="badge badge-accent">gas_giant_jupiter</span></td><td>Газовый гигант</td><td>321</td><td>31.3%</td></tr>
+  <tr><td><span class="badge badge-green">super_earth</span></td><td>Суперземля</td><td>221</td><td>21.6%</td></tr>
+  <tr><td><span class="badge badge-yellow">terrestrial_rocky</span></td><td>Каменистая планета</td><td>96</td><td>9.4%</td></tr>
+  <tr><td><span class="badge badge-red">super_jupiter_extreme</span></td><td>Суперюпитер</td><td>56</td><td>5.5%</td></tr>
+</table>
+
+<div class="why-box">
+  <strong>Почему это важно:</strong> Классы сильно несбалансированы. sub_neptune (330) в 6 раз больше super_jupiter (56). Модели будет сложнее распознавать редкие классы — у неё просто мало примеров для обучения. Именно поэтому мы используем <strong>macro-усреднение</strong> метрик, а не weighted.
+</div>
+</div>
+
+<details>
+  <summary>Код загрузки данных — построчный разбор</summary>
+  <div class="card">
+<pre>df_raw = pd.read_csv(DATA_PATH)          # читаем CSV в DataFrame
+cols_needed = FEATURE_COLUMNS + [TARGET_COLUMN]
+df = df_raw[cols_needed].dropna()         # берём только нужные столбцы, удаляем NaN
+df = df.reset_index(drop=True)            # нумеруем строки с 0
+
+if len(df) > MAX_SAMPLES:                 # ограничиваем до 1024
+    df, _ = train_test_split(
+        df, train_size=MAX_SAMPLES,
+        random_state=SEED,
+        stratify=df[TARGET_COLUMN]        # сохраняем пропорции классов!
+    )</pre>
+    <div class="why-box">
+      <strong>Зачем stratify?</strong> Без stratify случайная выборка 1024 из 4368 может случайно взять 0 super_jupiter (их и так 56). Stratify гарантирует, что пропорции классов в выборке совпадают с оригиналом.
+    </div>
+  </div>
+</details>
+
+<!-- ═══════════════ EDA CHARTS ═══════════════ -->
+<h3>Что показывают графики EDA</h3>
+<div class="card">
+<table>
+  <tr><th>График</th><th>Что видим</th><th>Зачем нужен</th></tr>
+  <tr>
+    <td><strong>Bar chart классов</strong></td>
+    <td>sub_neptune и gas_giant доминируют</td>
+    <td>Оценить дисбаланс. Он объясняет, почему recall у terrestrial = 0%</td>
+  </tr>
+  <tr>
+    <td><strong>Гистограммы признаков</strong></td>
+    <td>pl_orbper скошен вправо (много малых, мало огромных периодов)</td>
+    <td>Понять распределение. Скошенные признаки сложнее для модели</td>
+  </tr>
+  <tr>
+    <td><strong>Boxplot</strong></td>
+    <td>gas_giant и super_jupiter имеют больший pl_orbper и st_mass</td>
+    <td>Увидеть различия между классами. Чем больше различия — тем легче классифицировать</td>
+  </tr>
+  <tr>
+    <td><strong>Корреляционная матрица</strong></td>
+    <td>st_teff и st_mass коррелируют (0.57). Остальные пары слабо</td>
+    <td>Проверить мультиколлинеарность. Высокая корреляция = избыточные признаки</td>
+  </tr>
+  <tr>
+    <td><strong>PCA-проекция</strong></td>
+    <td>Классы сильно перекрываются в 2D</td>
+    <td>Если классы не разделяются даже визуально — задача сложная, высокого accuracy ожидать не стоит</td>
+  </tr>
+</table>
+</div>
+
+
+<!-- ═══════════════ PREPROCESSING ═══════════════ -->
+<h2 id="preprocess">2. Предобработка данных</h2>
+
+<h3>Разделение: 60 / 20 / 20</h3>
+
+<svg viewBox="0 0 700 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:1em auto">
+  <rect x="0" y="15" width="420" height="50" rx="6" fill="var(--node-input)" stroke="var(--border)"/>
+  <text x="210" y="44" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">Train: 614 (60%)</text>
+  <text x="210" y="58" text-anchor="middle" font-size="10" fill="var(--fg-dim)">Обучение весов</text>
+
+  <rect x="425" y="15" width="140" height="50" rx="6" fill="var(--node-hidden)" stroke="var(--border)"/>
+  <text x="495" y="44" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">Val: 205 (20%)</text>
+  <text x="495" y="58" text-anchor="middle" font-size="10" fill="var(--fg-dim)">Контроль переобуч.</text>
+
+  <rect x="570" y="15" width="130" height="50" rx="6" fill="var(--node-output)" stroke="var(--border)"/>
+  <text x="635" y="44" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">Test: 205 (20%)</text>
+  <text x="635" y="58" text-anchor="middle" font-size="10" fill="var(--fg-dim)">Финальная оценка</text>
+</svg>
+
+<div class="why-box">
+<strong>Зачем 3 части, а не 2?</strong> Train — для подгонки весов. Validation — смотрим loss после каждой эпохи, чтобы вовремя остановить при переобучении. Test — трогаем один раз в конце, чтобы получить честную оценку. Если тестировать на val — это «утечка» информации: мы подбирали гиперпараметры глядя на val, он уже нечестный.
+</div>
+
+<h3>StandardScaler: зачем нормализовать</h3>
+<div class="card">
+
+<pre>scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)   # вычислить μ, σ и применить
+X_val   = scaler.transform(X_val)         # применить ТЕ ЖЕ μ, σ
+X_test  = scaler.transform(X_test)        # применить ТЕ ЖЕ μ, σ</pre>
+
+<p>Формула: <code>x_scaled = (x - μ) / σ</code> — после неё каждый признак имеет среднее 0 и std 1.</p>
+
+<div class="why-box">
+<strong>Зачем?</strong> Без нормализации st_teff (~5000) доминирует над st_met (~0.01). Градиенты будут огромными по одним осям и крошечными по другим — обучение будет нестабильным и медленным. StandardScaler уравнивает масштабы.
+</div>
+
+<div class="tip-box">
+<strong>Важно для ответа преподавателю:</strong> <code>fit_transform</code> вызываем ТОЛЬКО на train! На val/test — только <code>transform</code>. Иначе мы «подглядываем» в тестовые данные (data leakage) — среднее и std должны быть из обучающей выборки.
+</div>
+</div>
+
+<h3>Тензоры и DataLoader</h3>
+<div class="card">
+<pre>X_train_t = torch.tensor(X_train, dtype=torch.float32)  # NumPy → Tensor
+y_train_t = torch.tensor(y_train, dtype=torch.long)      # метки — целые числа
+
+train_loader = DataLoader(
+    TensorDataset(X_train_t, y_train_t),
+    batch_size=32,      # по 32 объекта за раз
+    shuffle=True         # перемешивать каждую эпоху
+)</pre>
+<div class="why-box">
+<strong>Зачем batch_size=32, а не все 614 сразу?</strong> Мини-батчи дают стохастический шум в градиентах — помогают выбираться из локальных минимумов. Плюс экономят память. 32 — стандартное значение, хорошо работает для малых датасетов.
+</div>
+<div class="why-box">
+<strong>Зачем shuffle=True?</strong> Без перемешивания модель видит данные в одном порядке и может «запомнить» последовательность вместо паттернов. Shuffle разрушает этот эффект.
+</div>
+</div>
+
+<!-- ═══════════════ MLP ARCHITECTURE ═══════════════ -->
+<h2 id="mlp">3. Архитектура MLP</h2>
+
+<p>MLP (Multi-Layer Perceptron) — полносвязная нейронная сеть, где каждый нейрон слоя связан со всеми нейронами предыдущего слоя.</p>
+
+<h3>Схема сети [64, 32]</h3>
+
+<svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;display:block;margin:1em auto">
+  <!-- Input layer -->
+  <rect x="10" y="10" width="160" height="200" rx="10" fill="var(--node-input)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="90" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">Вход (4)</text>
+  <circle cx="90" cy="65" r="14" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="90" y="69" text-anchor="middle" font-size="8" fill="var(--fg)">teff</text>
+  <circle cx="90" cy="105" r="14" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="90" y="109" text-anchor="middle" font-size="8" fill="var(--fg)">mass</text>
+  <circle cx="90" cy="145" r="14" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="90" y="149" text-anchor="middle" font-size="8" fill="var(--fg)">met</text>
+  <circle cx="90" cy="185" r="14" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="90" y="189" text-anchor="middle" font-size="8" fill="var(--fg)">orbp</text>
+
+  <!-- Arrow 1 -->
+  <line x1="172" y1="110" x2="208" y2="110" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Hidden 1 -->
+  <rect x="210" y="10" width="160" height="310" rx="10" fill="var(--node-hidden)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="290" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">Скрытый 1 (64)</text>
+  <text x="290" y="55" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Linear(4→64)</text>
+  <text x="290" y="70" text-anchor="middle" font-size="9" fill="var(--fg-dim)">BatchNorm1d(64)</text>
+  <text x="290" y="85" text-anchor="middle" font-size="9" fill="var(--fg-dim)">ReLU()</text>
+  <text x="290" y="100" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Dropout(0.3)</text>
+
+  <!-- Neurons representation -->
+  <g transform="translate(235, 115)">
+    <rect x="0" y="0" width="110" height="90" rx="6" fill="var(--bg-card)" stroke="var(--border)" opacity="0.6"/>
+    <text x="55" y="50" text-anchor="middle" font-size="30" fill="var(--accent)" opacity="0.3">64</text>
+    <text x="55" y="78" text-anchor="middle" font-size="9" fill="var(--fg-dim)">нейронов</text>
+  </g>
+  <text x="290" y="230" text-anchor="middle" font-size="10" fill="var(--fg-dim)">Параметров:</text>
+  <text x="290" y="245" text-anchor="middle" font-size="11" font-weight="600" fill="var(--accent)">4×64 + 64 = 320</text>
+  <text x="290" y="260" text-anchor="middle" font-size="9" fill="var(--fg-dim)">(W: 256, b: 64)</text>
+
+  <!-- Arrow 2 -->
+  <line x1="372" y1="160" x2="408" y2="160" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Hidden 2 -->
+  <rect x="410" y="30" width="160" height="280" rx="10" fill="var(--node-hidden)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="490" y="55" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">Скрытый 2 (32)</text>
+  <text x="490" y="75" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Linear(64→32)</text>
+  <text x="490" y="90" text-anchor="middle" font-size="9" fill="var(--fg-dim)">BatchNorm1d(32)</text>
+  <text x="490" y="105" text-anchor="middle" font-size="9" fill="var(--fg-dim)">ReLU()</text>
+  <text x="490" y="120" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Dropout(0.3)</text>
+
+  <g transform="translate(435, 135)">
+    <rect x="0" y="0" width="110" height="80" rx="6" fill="var(--bg-card)" stroke="var(--border)" opacity="0.6"/>
+    <text x="55" y="46" text-anchor="middle" font-size="30" fill="var(--accent)" opacity="0.3">32</text>
+    <text x="55" y="68" text-anchor="middle" font-size="9" fill="var(--fg-dim)">нейрона</text>
+  </g>
+  <text x="490" y="240" text-anchor="middle" font-size="10" fill="var(--fg-dim)">Параметров:</text>
+  <text x="490" y="255" text-anchor="middle" font-size="11" font-weight="600" fill="var(--accent)">64×32 + 32 = 2080</text>
+
+  <!-- Arrow 3 -->
+  <line x1="572" y1="170" x2="608" y2="170" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Output -->
+  <rect x="610" y="60" width="140" height="220" rx="10" fill="var(--node-output)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="680" y="85" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">Выход (5)</text>
+  <text x="680" y="105" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Linear(32→5)</text>
+  <text x="680" y="120" text-anchor="middle" font-size="9" fill="var(--fg-dim)">БЕЗ активации!</text>
+
+  <circle cx="680" cy="150" r="12" fill="var(--bg-card)" stroke="var(--accent)"/>
+  <text x="680" y="154" text-anchor="middle" font-size="7" fill="var(--fg)">gas</text>
+  <circle cx="680" cy="180" r="12" fill="var(--bg-card)" stroke="var(--accent)"/>
+  <text x="680" y="184" text-anchor="middle" font-size="7" fill="var(--fg)">nep</text>
+  <circle cx="680" cy="210" r="12" fill="var(--bg-card)" stroke="var(--accent)"/>
+  <text x="680" y="214" text-anchor="middle" font-size="7" fill="var(--fg)">sE</text>
+  <circle cx="680" cy="240" r="12" fill="var(--bg-card)" stroke="var(--accent)"/>
+  <text x="680" y="244" text-anchor="middle" font-size="7" fill="var(--fg)">sJ</text>
+  <circle cx="680" cy="270" r="12" fill="var(--bg-card)" stroke="var(--accent)"/>
+  <text x="680" y="274" text-anchor="middle" font-size="7" fill="var(--fg)">ter</text>
+
+  <text x="680" y="300" text-anchor="middle" font-size="11" font-weight="600" fill="var(--accent)">32×5+5 = 165</text>
+
+  <!-- Loss -->
+  <rect x="300" y="380" width="240" height="80" rx="10" fill="var(--node-loss)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="420" y="405" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">CrossEntropyLoss</text>
+  <text x="420" y="425" text-anchor="middle" font-size="10" fill="var(--fg-dim)">= Softmax + NLL Loss</text>
+  <text x="420" y="445" text-anchor="middle" font-size="10" fill="var(--fg-dim)">Штрафует за неуверенность в правильном классе</text>
+  <line x1="680" y1="282" x2="680" y2="350" stroke="var(--fg-dim)" stroke-dasharray="4" stroke-width="1"/>
+  <line x1="680" y1="350" x2="542" y2="400" stroke="var(--fg-dim)" stroke-dasharray="4" stroke-width="1" marker-end="url(#arr)"/>
+  <text x="630" y="345" font-size="9" fill="var(--fg-dim)">логиты</text>
+
+  <!-- Total -->
+  <rect x="10" y="470" width="740" height="40" rx="8" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="380" y="495" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)">Всего параметров: 320 + 2080 + 165 + BatchNorm (64+32)×2 = 2757</text>
+</svg>
+
+<h3>Компоненты каждого слоя — зачем каждый</h3>
+<div class="card">
+<table>
+  <tr><th>Компонент</th><th>Что делает</th><th>Зачем</th></tr>
+  <tr>
+    <td><code>nn.Linear(in, out)</code></td>
+    <td>y = W*x + b</td>
+    <td>Линейное преобразование. Основа нейрона — обучаемые параметры W и b</td>
+  </tr>
+  <tr>
+    <td><code>nn.BatchNorm1d(n)</code></td>
+    <td>(x - μ_batch) / σ_batch</td>
+    <td>Нормализует выходы по текущему батчу. Ускоряет обучение, стабилизирует градиенты. Бонус: небольшая регуляризация</td>
+  </tr>
+  <tr>
+    <td><code>nn.ReLU()</code></td>
+    <td>max(0, x)</td>
+    <td>Нелинейность! Без неё вся сеть = одна линейная функция (бесполезна). ReLU — самая быстрая и популярная</td>
+  </tr>
+  <tr>
+    <td><code>nn.Dropout(0.3)</code></td>
+    <td>Случайно зануляет 30% нейронов при обучении</td>
+    <td>Регуляризация. Сеть не может «полагаться» на один нейрон — вынуждена распределять знания. Борется с переобучением</td>
+  </tr>
+</table>
+</div>
+
+<div class="why-box">
+<strong>Почему на выходном слое НЕТ активации?</strong> Потому что <code>CrossEntropyLoss</code> в PyTorch уже включает softmax внутри. Если поставить softmax + CrossEntropyLoss — softmax применится дважды, и модель будет считать неправильные градиенты. Это частая ошибка!
+</div>
+
+<details>
+  <summary>Код класса MLP — построчно</summary>
+  <div class="card">
+<pre>class MLP(nn.Module):
+    def __init__(self, inputDim, hiddenShape, outputDim=5,
+                 fActivation=nn.ReLU, dropoutRate=0.3):
+        super().__init__()         # вызов конструктора базового класса
+
+        # Входной блок: 4 → 64
+        self.inputModule = nn.Sequential(
+            nn.Linear(inputDim, hiddenShape[0]),   # W: [4×64], b: [64]
+            nn.BatchNorm1d(hiddenShape[0]),         # нормализация
+            fActivation(),                          # ReLU
+            nn.Dropout(dropoutRate),                # dropout 30%
+        )
+
+        # Скрытые блоки: 64 → 32 (для [64, 32])
+        # Генерируется автоматически: для каждой пары соседних размеров
+        self.hiddenModule = nn.Sequential(
+            *[nn.Sequential(
+                nn.Linear(hiddenShape[i], hiddenShape[i+1]),
+                nn.BatchNorm1d(hiddenShape[i+1]),
+                fActivation(),
+                nn.Dropout(dropoutRate),
+            ) for i in range(len(hiddenShape) - 1)]
+        )
+
+        # Выходной слой: 32 → 5 (без активации!)
+        self.outputModule = nn.Linear(hiddenShape[-1], outputDim)
+
+    def forward(self, x):
+        x = self.inputModule(x)    # (batch, 4) → (batch, 64)
+        x = self.hiddenModule(x)   # (batch, 64) → (batch, 32)
+        x = self.outputModule(x)   # (batch, 32) → (batch, 5) — логиты
+        return x</pre>
+    <div class="tip-box">
+      <strong>nn.Sequential:</strong> контейнер, который пропускает данные через все слои последовательно. Вместо ручного вызова каждого слоя в forward().
+    </div>
+  </div>
+</details>
+
+<!-- ═══════════════ FORWARD PASS ═══════════════ -->
+<h2 id="forward">4. Forward Pass (прямой проход)</h2>
+
+<p>Прямой проход — это путь данных от входа к выходу. Для одного объекта:</p>
+
+<div class="formula-box">
+<strong>Слой 1:</strong> z₁ = W₁·x + b₁     →  BN(z₁)  →  a₁ = ReLU(BN(z₁))  →  Dropout(a₁)
+<strong>Слой 2:</strong> z₂ = W₂·a₁ + b₂    →  BN(z₂)  →  a₂ = ReLU(BN(z₂))  →  Dropout(a₂)
+<strong>Выход:</strong>  z₃ = W₃·a₂ + b₃    →  логиты (5 чисел)
+<strong>Loss:</strong>   L = CrossEntropy(softmax(z₃), y_true)
+</div>
+
+<h3>Пример прохода одного объекта</h3>
+<div class="card">
+<pre>Вход x = [5400, 0.92, 0.13, 1684]  (raw)
+         ↓ StandardScaler
+x_scaled = [0.08, -0.12, 0.63, 1.75]  (нормализовано)
+         ↓ Linear(4→64): W₁·x + b₁
+z₁ = [0.34, -1.20, 0.87, ..., -0.55]  (64 числа)
+         ↓ BatchNorm
+z₁_bn = [-0.12, -2.1, 0.91, ..., -0.3]
+         ↓ ReLU: max(0, x)
+a₁ = [0, 0, 0.91, ..., 0]  (отрицательные стали 0)
+         ↓ Dropout(0.3): случайно занулить 30%
+a₁_drop = [0, 0, 0.91, ..., 0]
+         ↓ Linear(64→32): W₂·a₁ + b₂
+z₂ = [...32 числа...]
+         ↓ BN → ReLU → Dropout
+a₂ = [...32 числа...]
+         ↓ Linear(32→5): W₃·a₂ + b₃
+логиты = [2.1, 5.3, 0.8, -1.0, 0.3]  (5 сырых оценок)
+         ↓ softmax (внутри CrossEntropyLoss)
+вероятности = [0.04, 0.82, 0.03, 0.01, 0.10]
+         ↓ argmax
+предсказание = класс 1 (sub_neptune) с вероятностью 82%</pre>
+</div>
+
+
+<!-- ═══════════════ BACKPROPAGATION ═══════════════ -->
+<h2 id="backprop">5. Backpropagation (обратное распространение ошибки)</h2>
+
+<p>Backprop — алгоритм вычисления <strong>градиентов</strong> функции потерь по всем весам сети. Это сердце обучения нейросети.</p>
+
+<h3>Идея в одном предложении</h3>
+<div class="card" style="text-align:center; font-size: 1.1em;">
+  <strong>Цепное правило (chain rule):</strong> если f = g(h(x)), то f'(x) = g'(h(x)) · h'(x)
+  <p style="font-size:0.85em; color:var(--fg-dim)">Градиент «течёт» назад от loss к каждому весу, умножаясь на локальный градиент каждого слоя</p>
+</div>
+
+<h3>Схема Backprop для нашей сети</h3>
+
+<svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;display:block;margin:1em auto">
+  <defs>
+    <marker id="arr-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="var(--danger)"/>
+    </marker>
+    <marker id="arr-grn" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="var(--success)"/>
+    </marker>
+  </defs>
+
+  <!-- Forward pass (top) -->
+  <text x="380" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="var(--success)">FORWARD PASS →</text>
+
+  <rect x="10" y="35" width="100" height="50" rx="8" fill="var(--node-input)" stroke="var(--border)"/>
+  <text x="60" y="60" text-anchor="middle" font-size="11" font-weight="600" fill="var(--fg)">x (вход)</text>
+  <text x="60" y="75" text-anchor="middle" font-size="9" fill="var(--fg-dim)">[batch, 4]</text>
+
+  <line x1="112" y1="60" x2="148" y2="60" stroke="var(--success)" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+
+  <rect x="150" y="35" width="120" height="50" rx="8" fill="var(--node-hidden)" stroke="var(--border)"/>
+  <text x="210" y="57" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">z₁ = W₁x + b₁</text>
+  <text x="210" y="75" text-anchor="middle" font-size="9" fill="var(--fg-dim)">→BN→ReLU→Drop</text>
+
+  <line x1="272" y1="60" x2="308" y2="60" stroke="var(--success)" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+
+  <rect x="310" y="35" width="120" height="50" rx="8" fill="var(--node-hidden)" stroke="var(--border)"/>
+  <text x="370" y="57" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">z₂ = W₂a₁ + b₂</text>
+  <text x="370" y="75" text-anchor="middle" font-size="9" fill="var(--fg-dim)">→BN→ReLU→Drop</text>
+
+  <line x1="432" y1="60" x2="468" y2="60" stroke="var(--success)" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+
+  <rect x="470" y="35" width="120" height="50" rx="8" fill="var(--node-output)" stroke="var(--border)"/>
+  <text x="530" y="57" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">z₃ = W₃a₂ + b₃</text>
+  <text x="530" y="75" text-anchor="middle" font-size="9" fill="var(--fg-dim)">логиты [batch,5]</text>
+
+  <line x1="592" y1="60" x2="628" y2="60" stroke="var(--success)" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+
+  <rect x="630" y="35" width="120" height="50" rx="8" fill="var(--node-loss)" stroke="var(--border)"/>
+  <text x="690" y="57" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">Loss = CE</text>
+  <text x="690" y="75" text-anchor="middle" font-size="9" fill="var(--fg-dim)">скаляр</text>
+
+  <!-- Backward pass (bottom) -->
+  <text x="380" y="130" text-anchor="middle" font-size="11" font-weight="700" fill="var(--danger)">← BACKWARD PASS (backprop)</text>
+
+  <rect x="630" y="145" width="120" height="50" rx="8" fill="var(--node-loss)" stroke="var(--danger)" stroke-width="1.5"/>
+  <text x="690" y="167" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">∂L/∂z₃</text>
+  <text x="690" y="185" text-anchor="middle" font-size="9" fill="var(--fg-dim)">= softmax(z₃) - y</text>
+
+  <line x1="628" y1="170" x2="592" y2="170" stroke="var(--danger)" stroke-width="1.5" marker-end="url(#arr-red)"/>
+
+  <rect x="470" y="145" width="120" height="50" rx="8" fill="var(--node-output)" stroke="var(--danger)" stroke-width="1.5"/>
+  <text x="530" y="162" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">∂L/∂W₃</text>
+  <text x="530" y="180" text-anchor="middle" font-size="9" fill="var(--fg-dim)">= ∂L/∂z₃ · a₂ᵀ</text>
+
+  <line x1="468" y1="170" x2="432" y2="170" stroke="var(--danger)" stroke-width="1.5" marker-end="url(#arr-red)"/>
+
+  <rect x="310" y="145" width="120" height="50" rx="8" fill="var(--node-hidden)" stroke="var(--danger)" stroke-width="1.5"/>
+  <text x="370" y="162" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">∂L/∂W₂</text>
+  <text x="370" y="180" text-anchor="middle" font-size="9" fill="var(--fg-dim)">= ∂L/∂a₁ · chain</text>
+
+  <line x1="308" y1="170" x2="272" y2="170" stroke="var(--danger)" stroke-width="1.5" marker-end="url(#arr-red)"/>
+
+  <rect x="150" y="145" width="120" height="50" rx="8" fill="var(--node-hidden)" stroke="var(--danger)" stroke-width="1.5"/>
+  <text x="210" y="162" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">∂L/∂W₁</text>
+  <text x="210" y="180" text-anchor="middle" font-size="9" fill="var(--fg-dim)">= ∂L/∂x · chain</text>
+
+  <!-- Update step -->
+  <text x="380" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">ОБНОВЛЕНИЕ ВЕСОВ (Adam)</text>
+
+  <rect x="120" y="255" width="520" height="85" rx="10" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="380" y="280" text-anchor="middle" font-size="11" fill="var(--fg)">Для каждого параметра θ (все W и b в сети):</text>
+  <text x="380" y="300" text-anchor="middle" font-size="12" font-weight="600" font-family="'JetBrains Mono', monospace" fill="var(--accent)">θ_new = θ_old - lr · ∂L/∂θ</text>
+  <text x="380" y="320" text-anchor="middle" font-size="10" fill="var(--fg-dim)">lr = 0.001 (learning rate). Adam адаптирует lr для каждого параметра отдельно</text>
+</svg>
+
+<h3>Что происходит в коде</h3>
+<div class="card">
+<pre>for xb, yb in train_loader:       # берём мини-батч (32 объекта)
+    optimizer.zero_grad()           # 1. Обнулить градиенты
+    loss = criterion(model(xb), yb) # 2. Forward: предсказание → loss
+    loss.backward()                 # 3. Backward: вычислить ∂L/∂θ для всех θ
+    optimizer.step()                # 4. Update: θ = θ - lr · ∂L/∂θ</pre>
+
+<table>
+  <tr><th>Строка</th><th>Что происходит</th><th>Зачем</th></tr>
+  <tr>
+    <td><code>zero_grad()</code></td>
+    <td>Обнуляет все .grad тензоры</td>
+    <td>PyTorch по умолчанию <em>накапливает</em> градиенты (+=). Без обнуления градиенты будут расти от батча к батчу</td>
+  </tr>
+  <tr>
+    <td><code>model(xb)</code></td>
+    <td>Вызывает forward() — прогоняет данные через сеть</td>
+    <td>Получает логиты (предсказания)</td>
+  </tr>
+  <tr>
+    <td><code>criterion(...)</code></td>
+    <td>CrossEntropyLoss считает скаляр loss</td>
+    <td>Одно число — «насколько плохо модель предсказала»</td>
+  </tr>
+  <tr>
+    <td><code>loss.backward()</code></td>
+    <td>Запускает backprop: chain rule по всему графу</td>
+    <td>Заполняет .grad у каждого параметра — «в какую сторону и насколько сильно двигать»</td>
+  </tr>
+  <tr>
+    <td><code>optimizer.step()</code></td>
+    <td>Adam обновляет все веса: θ -= lr · grad</td>
+    <td>Фактическое обучение — веса сдвигаются в сторону уменьшения loss</td>
+  </tr>
+</table>
+</div>
+
+<div class="why-box">
+<strong>Почему Adam, а не обычный SGD?</strong> Adam (Adaptive Moment Estimation) адаптирует learning rate для каждого параметра отдельно. Для параметров с редкими обновлениями — lr больше, для частых — меньше. Плюс использует «инерцию» (momentum). На практике сходится быстрее SGD и менее чувствителен к начальному lr.
+</div>
+
+
+<!-- ═══════════════ VECTORIZATION ═══════════════ -->
+<h2 id="vectorization">6. Векторизация формул</h2>
+
+<p>Нейронная сеть обрабатывает не один объект, а <strong>батч из 32</strong> одновременно. Все операции — матричные.</p>
+
+<h3>Один объект vs батч</h3>
+<div class="card">
+
+<div class="grid-2">
+<div>
+<h3 style="margin-top:0">Один объект (скалярно)</h3>
+<div class="formula-box">
+Для нейрона j слоя l:
+z_j = Σᵢ (w_ji · a_i) + b_j
+a_j = ReLU(z_j)
+
+4 входа → 64 нейрона = 256 умножений
+</div>
+</div>
+<div>
+<h3 style="margin-top:0">Батч (матрично)</h3>
+<div class="formula-box">
+Z = X · Wᵀ + b
+A = ReLU(Z)
+
+X: [32, 4]   — 32 объекта × 4 признака
+W: [64, 4]   — 64 нейрона × 4 входа
+Wᵀ: [4, 64]
+Z: [32, 64]  — результат для всех 32 сразу
+b: [64]      — broadcast: добавляется к каждой строке
+</div>
+</div>
+</div>
+
+<div class="why-box">
+<strong>Зачем векторизация?</strong> GPU параллелят матричные операции. Вместо 32 последовательных проходов — одно умножение матриц. Это в 10-100x быстрее. Поэтому batch_size кратен степеням двойки (32, 64, 128) — GPU оптимизированы под эти размеры.
+</div>
+</div>
+
+<h3>Полный forward pass в матричной форме</h3>
+<div class="formula-box">
+<strong>Входные данные:</strong>  X ∈ ℝ^{32×4}
+<strong>Слой 1:</strong>  Z₁ = X · W₁ᵀ + b₁        (W₁ ∈ ℝ^{64×4},  Z₁ ∈ ℝ^{32×64})
+            H₁ = BatchNorm(Z₁)
+            A₁ = ReLU(H₁)
+            A₁ = Dropout(A₁, p=0.3)
+
+<strong>Слой 2:</strong>  Z₂ = A₁ · W₂ᵀ + b₂       (W₂ ∈ ℝ^{32×64}, Z₂ ∈ ℝ^{32×32})
+            H₂ = BatchNorm(Z₂)
+            A₂ = ReLU(H₂)
+            A₂ = Dropout(A₂, p=0.3)
+
+<strong>Выход:</strong>   Z₃ = A₂ · W₃ᵀ + b₃       (W₃ ∈ ℝ^{5×32},  Z₃ ∈ ℝ^{32×5})
+
+<strong>Softmax:</strong> P = exp(Z₃) / Σ exp(Z₃)   (по оси классов, dim=1)
+           P ∈ ℝ^{32×5}  — вероятности для каждого из 32 объектов
+
+<strong>Loss:</strong>    L = -(1/32) · Σᵢ log(P[i, yᵢ])
+           yᵢ — истинный класс i-го объекта
+</div>
+
+<h3>Backward pass в матричной форме</h3>
+<div class="formula-box">
+<strong>Градиент на выходе:</strong>
+  ∂L/∂Z₃ = P - Y_onehot    (softmax минус one-hot метка)
+  [32×5] = [32×5] - [32×5]
+
+<strong>Градиент по W₃:</strong>
+  ∂L/∂W₃ = (∂L/∂Z₃)ᵀ · A₂ / batch_size
+  [5×32] = [5×32] · [32×32] / 32
+
+<strong>Градиент «назад» по A₂:</strong>
+  ∂L/∂A₂ = ∂L/∂Z₃ · W₃
+  [32×32] = [32×5] · [5×32]
+
+<strong>Через ReLU (поэлементно):</strong>
+  ∂L/∂H₂ = ∂L/∂A₂ ⊙ (H₂ > 0)    ← маска: 1 где было > 0, 0 где ≤ 0
+  [32×32] = [32×32] ⊙ [32×32]
+
+  ...и так далее до ∂L/∂W₁
+</div>
+
+<div class="tip-box">
+<strong>Ключевой момент для преподавателя:</strong> Градиент через ReLU — это просто маска: где вход был положительный — пропускаем градиент (×1), где отрицательный — обнуляем (×0). Именно поэтому «мёртвые нейроны» — нейроны, которые всегда получают отрицательный вход — перестают обучаться навсегда: через них не проходит градиент.
+</div>
+
+
+<!-- ═══════════════ ACTIVATIONS ═══════════════ -->
+<h2 id="activations">7. Функции активации</h2>
+
+<p>Функция активации вносит <strong>нелинейность</strong>. Без неё любая глубокая сеть = одна линейная функция (доказательство: композиция линейных функций = линейная функция).</p>
+
+<div class="grid-2">
+
+<div class="card act-card">
+  <h3 style="margin-top:0">Sigmoid</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="100" x2="180" y2="100" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" text-anchor="middle" font-size="8" fill="var(--fg-dim)">0</text>
+    <text x="185" y="104" font-size="8" fill="var(--fg-dim)">x</text>
+    <text x="96" y="18" font-size="8" fill="var(--fg-dim)">1</text>
+    <text x="96" y="55" font-size="8" fill="var(--fg-dim)">0.5</text>
+    <line x1="20" y1="50" x2="180" y2="50" stroke="var(--border)" stroke-dasharray="2" opacity="0.4"/>
+    <path d="M20,95 Q40,95 55,92 Q70,88 80,80 Q90,65 100,50 Q110,35 120,20 Q135,12 150,10 Q165,8 180,7" fill="none" stroke="var(--success)" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">f(x) = 1 / (1 + e⁻ˣ)</div>
+  <div class="formula">Диапазон: (0, 1)</div>
+  <div class="pros">+ вероятностная интерпретация</div>
+  <div class="cons">- vanishing gradients при |x|>5</div>
+  <div class="cons">- не центрирована (>0)</div>
+</div>
+
+<div class="card act-card">
+  <h3 style="margin-top:0">Tanh</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="60" x2="180" y2="60" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" font-size="8" fill="var(--fg-dim)">0</text>
+    <text x="96" y="18" font-size="8" fill="var(--fg-dim)">1</text>
+    <text x="92" y="108" font-size="8" fill="var(--fg-dim)">-1</text>
+    <path d="M20,105 Q40,103 55,100 Q70,95 80,85 Q90,72 100,60 Q110,48 120,35 Q135,18 150,14 Q165,11 180,10" fill="none" stroke="var(--info)" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">f(x) = (eˣ - e⁻ˣ) / (eˣ + e⁻ˣ)</div>
+  <div class="formula">Диапазон: (-1, 1)</div>
+  <div class="pros">+ центрирована вокруг 0</div>
+  <div class="cons">- vanishing gradients</div>
+</div>
+
+<div class="card act-card">
+  <h3 style="margin-top:0">ReLU</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="100" x2="180" y2="100" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" font-size="8" fill="var(--fg-dim)">0</text>
+    <path d="M20,100 L100,100 L180,10" fill="none" stroke="var(--danger)" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">f(x) = max(0, x)</div>
+  <div class="formula">Диапазон: [0, +∞)</div>
+  <div class="pros">+ быстрая, нет насыщения при x>0</div>
+  <div class="pros">+ используется в нашей сети!</div>
+  <div class="cons">- «мёртвые нейроны» при x&lt;0</div>
+</div>
+
+<div class="card act-card">
+  <h3 style="margin-top:0">Leaky ReLU</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="100" x2="180" y2="100" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" font-size="8" fill="var(--fg-dim)">0</text>
+    <text x="28" y="95" font-size="8" fill="var(--fg-dim)">0.01x</text>
+    <path d="M20,99 L100,100 L180,10" fill="none" stroke="var(--warning)" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">f(x) = x if x>0, else 0.01x</div>
+  <div class="formula">Диапазон: (-∞, +∞)</div>
+  <div class="pros">+ нет мёртвых нейронов</div>
+  <div class="cons">- нужно подбирать α</div>
+</div>
+
+<div class="card act-card">
+  <h3 style="margin-top:0">ELU</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="75" x2="180" y2="75" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" font-size="8" fill="var(--fg-dim)">0</text>
+    <text x="30" y="106" font-size="8" fill="var(--fg-dim)">-α</text>
+    <line x1="20" y1="100" x2="95" y2="100" stroke="var(--border)" stroke-dasharray="2" opacity="0.4"/>
+    <path d="M20,99 Q40,98 55,97 Q70,95 80,92 Q90,85 100,75 L180,10" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">f(x) = x if x>0, else α(eˣ-1)</div>
+  <div class="formula">Диапазон: (-α, +∞)</div>
+  <div class="pros">+ гладкая, нет мёртвых нейронов</div>
+  <div class="cons">- дороже вычислительно (exp)</div>
+</div>
+
+<div class="card act-card">
+  <h3 style="margin-top:0">Swish</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="75" x2="180" y2="75" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" font-size="8" fill="var(--fg-dim)">0</text>
+    <path d="M20,78 Q40,79 55,80 Q65,81 75,82 Q85,82 90,80 Q95,78 100,75 Q110,65 130,40 Q150,20 170,12 L180,8" fill="none" stroke="#ec4899" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">f(x) = x · sigmoid(x)</div>
+  <div class="formula">Диапазон: (~-0.28, +∞)</div>
+  <div class="pros">+ гладкая, из исследования Google</div>
+  <div class="cons">- дороже ReLU</div>
+</div>
+
+<div class="card act-card">
+  <h3 style="margin-top:0">Softplus</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="100" x2="180" y2="100" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" font-size="8" fill="var(--fg-dim)">0</text>
+    <path d="M20,98 Q40,97 55,96 Q70,93 80,88 Q90,78 100,65 Q115,42 130,28 Q150,15 170,8 L180,5" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">f(x) = ln(1 + eˣ)</div>
+  <div class="formula">Диапазон: (0, +∞)</div>
+  <div class="pros">+ гладкая аппроксимация ReLU</div>
+  <div class="cons">- нет отрицательных выходов</div>
+</div>
+
+<div class="card act-card">
+  <h3 style="margin-top:0">GELU</h3>
+  <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px">
+    <line x1="20" y1="75" x2="180" y2="75" stroke="var(--border)"/>
+    <line x1="100" y1="10" x2="100" y2="110" stroke="var(--border)"/>
+    <text x="100" y="118" font-size="8" fill="var(--fg-dim)">0</text>
+    <path d="M20,77 Q40,78 55,79 Q65,80 75,81 Q85,80 90,79 Q95,77 100,75 Q110,63 130,38 Q150,18 170,10 L180,6" fill="none" stroke="#06b6d4" stroke-width="2.5"/>
+  </svg>
+  <div class="formula">BERT, GPT, Transformers</div>
+  <div class="formula">Диапазон: (~-0.17, +∞)</div>
+  <div class="pros">+ стандарт в NLP/LLM</div>
+  <div class="cons">- дорогая (tanh + степени)</div>
+</div>
+
+</div>
+
+<div class="card">
+<h3>Производные (для backprop)</h3>
+<table>
+  <tr><th>Функция</th><th>f(x)</th><th>f'(x)</th><th>Особенность</th></tr>
+  <tr><td>Sigmoid</td><td>σ(x)</td><td>σ(x)(1 - σ(x))</td><td>max = 0.25 при x=0, затухает</td></tr>
+  <tr><td>Tanh</td><td>tanh(x)</td><td>1 - tanh²(x)</td><td>max = 1 при x=0, затухает</td></tr>
+  <tr><td>ReLU</td><td>max(0,x)</td><td>1 (x>0), 0 (x≤0)</td><td>Не затухает! Но 0 при x&lt;0</td></tr>
+  <tr><td>Leaky ReLU</td><td>max(αx, x)</td><td>1 (x>0), α (x≤0)</td><td>Всегда ненулевой</td></tr>
+  <tr><td>Softmax</td><td>eᶻⱼ / Σeᶻᵢ</td><td>pⱼ(1-pⱼ) или -pⱼpₖ</td><td>Якобиан, не скаляр</td></tr>
+</table>
+</div>
+
+<div class="why-box">
+<strong>Почему мы выбрали ReLU, а не Sigmoid/Tanh?</strong>
+1) ReLU не страдает от vanishing gradients при x>0 (производная = 1, а не ~0 как у sigmoid).
+2) Вычислительно дешевле (просто max).
+3) Ведёт к разреженным представлениям (часть нейронов = 0) — это неплохая регуляризация.
+Sigmoid используется только в выходном слое для бинарной классификации (не наш случай).
+</div>
+
+
+<!-- ═══════════════ TRAINING ═══════════════ -->
+<h2 id="training">8. Процесс обучения</h2>
+
+<h3>model.train() vs model.eval()</h3>
+<div class="card">
+<table>
+  <tr><th>Режим</th><th>Dropout</th><th>BatchNorm</th><th>Когда</th></tr>
+  <tr>
+    <td><code>model.train()</code></td>
+    <td>Активен (случайно обнуляет нейроны)</td>
+    <td>Считает μ, σ по текущему батчу</td>
+    <td>Обучение (внутри цикла по батчам)</td>
+  </tr>
+  <tr>
+    <td><code>model.eval()</code></td>
+    <td>Выключен (все нейроны работают)</td>
+    <td>Использует накопленные μ, σ</td>
+    <td>Оценка (val, test) и инференс</td>
+  </tr>
+</table>
+<div class="why-box">
+<strong>Зачем переключать?</strong> При обучении dropout убирает 30% нейронов — это хорошо для регуляризации. Но при оценке мы хотим использовать всю сеть целиком, чтобы получить лучшее предсказание. Если забыть <code>model.eval()</code> — метрики будут занижены.
+</div>
+</div>
+
+<h3>torch.no_grad()</h3>
+<div class="card">
+<pre>model.eval()
+with torch.no_grad():    # отключить вычислительный граф
+    logits = model(x)    # быстрее, меньше памяти</pre>
+<div class="why-box">
+<strong>Зачем?</strong> PyTorch по умолчанию строит вычислительный граф для backward(). Это занимает память. При оценке backward() не нужен — <code>no_grad()</code> экономит ~30-50% памяти и ускоряет вычисления.
+</div>
+</div>
+
+<h3>Полный цикл обучения — построчный разбор</h3>
+<div class="card">
+<pre>def train_model(model, train_loader, val_loader, epochs, lr):
+    criterion = nn.CrossEntropyLoss()       # функция потерь
+    optimizer = optim.Adam(model.parameters(), lr=lr)  # оптимизатор
+    history = {'train_loss':[], 'val_loss':[], 'train_acc':[], 'val_acc':[]}
+
+    for epoch in range(epochs):             # 100 эпох
+        model.train()                       # включить dropout + BN в режиме обучения
+
+        for xb, yb in train_loader:         # по 32 объекта за раз
+            optimizer.zero_grad()           # 1) обнулить градиенты
+            loss = criterion(model(xb), yb) # 2) forward + loss
+            loss.backward()                 # 3) backward — вычислить градиенты
+            optimizer.step()                # 4) обновить веса: W -= lr * grad
+
+        model.eval()                        # выключить dropout
+        with torch.no_grad():               # отключить граф (экономия памяти)
+            t_loss, t_acc = evaluate(model, train_loader, criterion)
+            v_loss, v_acc = evaluate(model, val_loader, criterion)
+
+        history['train_loss'].append(t_loss)
+        # ... аналогично для остальных метрик
+
+    return history</pre>
+<div class="why-box">
+<strong>Почему optimizer.zero_grad() ПЕРЕД каждым батчем?</strong> PyTorch <em>накапливает</em> градиенты (складывает новые к старым). Это удобно для accumulation, но обычно нам нужен градиент только текущего батча. Без zero_grad() градиенты предыдущих батчей «загрязняют» текущий.
+</div>
+<div class="why-box">
+<strong>Порядок шагов (1-2-3-4) — это каноническая последовательность:</strong>
+<br>1. <code>zero_grad()</code> — очистить
+<br>2. <code>forward + loss</code> — предсказать и посчитать ошибку
+<br>3. <code>backward()</code> — распространить ошибку назад (заполнить .grad)
+<br>4. <code>step()</code> — шагнуть в направлении уменьшения ошибки
+<br>Перепутать порядок = сломать обучение.
+</div>
+</div>
+
+<h3>Функция evaluate() — код оценки</h3>
+<div class="card">
+<pre>def evaluate(model, loader, criterion):
+    loss_sum, correct, total = 0.0, 0, 0
+    for xb, yb in loader:
+        logits = model(xb)                          # предсказания (без softmax)
+        loss_sum += criterion(logits, yb).item() * xb.size(0)  # loss × размер батча
+        preds = logits.argmax(dim=1)                # argmax → номер класса
+        correct += (preds == yb).sum().item()       # сколько угадали
+        total += yb.size(0)                         # сколько всего
+    return loss_sum / total, correct / total        # средний loss и accuracy</pre>
+<div class="tip-box">
+<strong>Зачем <code>loss * xb.size(0)</code>?</strong> CrossEntropyLoss по умолчанию возвращает <em>среднее</em> по батчу. Чтобы получить средний loss по всему датасету, нужно: (1) умножить на размер батча → получить сумму; (2) сложить по всем батчам; (3) поделить на общее число объектов. Последний батч может быть неполным (614 % 32 = 6 объектов), поэтому нельзя просто усреднить потери батчей.
+</div>
+</div>
+
+<h3>Кривые обучения — как читать</h3>
+<div class="card">
+
+<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0.5em auto">
+  <!-- Good training -->
+  <rect x="10" y="5" width="210" height="190" rx="8" fill="var(--bg-card)" stroke="var(--border)"/>
+  <text x="115" y="25" text-anchor="middle" font-size="10" font-weight="700" fill="var(--success)">Нормальное обучение</text>
+  <text x="30" y="40" font-size="8" fill="var(--fg-dim)">loss</text>
+  <line x1="40" y1="35" x2="40" y2="170" stroke="var(--border)"/>
+  <line x1="40" y1="170" x2="200" y2="170" stroke="var(--border)"/>
+  <text x="200" y="182" font-size="8" fill="var(--fg-dim)">epoch</text>
+  <path d="M45,50 Q80,90 120,130 Q150,150 190,155" fill="none" stroke="var(--info)" stroke-width="2"/>
+  <path d="M45,55 Q80,95 120,135 Q150,155 190,158" fill="none" stroke="var(--warning)" stroke-width="2"/>
+  <text x="195" y="153" font-size="7" fill="var(--info)">train</text>
+  <text x="195" y="163" font-size="7" fill="var(--warning)">val</text>
+
+  <!-- Overfitting -->
+  <rect x="245" y="5" width="210" height="190" rx="8" fill="var(--bg-card)" stroke="var(--border)"/>
+  <text x="350" y="25" text-anchor="middle" font-size="10" font-weight="700" fill="var(--danger)">Переобучение</text>
+  <text x="265" y="40" font-size="8" fill="var(--fg-dim)">loss</text>
+  <line x1="275" y1="35" x2="275" y2="170" stroke="var(--border)"/>
+  <line x1="275" y1="170" x2="435" y2="170" stroke="var(--border)"/>
+  <text x="435" y="182" font-size="8" fill="var(--fg-dim)">epoch</text>
+  <path d="M280,50 Q310,90 340,130 Q370,155 430,165" fill="none" stroke="var(--info)" stroke-width="2"/>
+  <path d="M280,55 Q310,95 340,120 Q370,115 430,80" fill="none" stroke="var(--warning)" stroke-width="2"/>
+  <text x="432" y="167" font-size="7" fill="var(--info)">train↓</text>
+  <text x="432" y="78" font-size="7" fill="var(--warning)">val↑</text>
+  <text x="350" y="100" text-anchor="middle" font-size="8" fill="var(--danger)">расхождение!</text>
+
+  <!-- Underfitting -->
+  <rect x="480" y="5" width="210" height="190" rx="8" fill="var(--bg-card)" stroke="var(--border)"/>
+  <text x="585" y="25" text-anchor="middle" font-size="10" font-weight="700" fill="var(--warning)">Недообучение</text>
+  <text x="500" y="40" font-size="8" fill="var(--fg-dim)">loss</text>
+  <line x1="510" y1="35" x2="510" y2="170" stroke="var(--border)"/>
+  <line x1="510" y1="170" x2="670" y2="170" stroke="var(--border)"/>
+  <text x="670" y="182" font-size="8" fill="var(--fg-dim)">epoch</text>
+  <path d="M515,55 Q545,70 575,80 Q605,85 665,87" fill="none" stroke="var(--info)" stroke-width="2"/>
+  <path d="M515,60 Q545,75 575,85 Q605,90 665,92" fill="none" stroke="var(--warning)" stroke-width="2"/>
+  <text x="585" y="115" text-anchor="middle" font-size="8" fill="var(--warning)">обе кривые высоко</text>
+  <text x="585" y="128" text-anchor="middle" font-size="8" fill="var(--warning)">модель слишком простая</text>
+</svg>
+
+<p><strong>Наш результат:</strong> train_acc = 53.3%, val_acc = 57.1%, разрыв = -3.8%. Переобучения нет (val даже чуть выше — нормально при dropout). Но accuracy невысокий — задача объективно сложная (классы перекрываются на PCA).</p>
+</div>
+
+
+<!-- ═══════════════ METRICS ═══════════════ -->
+<h2 id="metrics">9. Метрики оценки</h2>
+
+<h3>Confusion Matrix — как читать</h3>
+<div class="card">
+<svg viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:300px;display:block;margin:0.5em auto">
+  <text x="150" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="var(--fg)">Confusion Matrix (упрощённо)</text>
+  <text x="150" y="40" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Строки = истинное, Столбцы = предсказанное</text>
+
+  <rect x="80" y="55" width="90" height="70" rx="4" fill="var(--node-output)" stroke="var(--border)"/>
+  <text x="125" y="82" text-anchor="middle" font-size="20" font-weight="700" fill="var(--success)">TP</text>
+  <text x="125" y="98" text-anchor="middle" font-size="8" fill="var(--fg-dim)">Правильно</text>
+  <text x="125" y="110" text-anchor="middle" font-size="8" fill="var(--fg-dim)">нашёл</text>
+
+  <rect x="175" y="55" width="90" height="70" rx="4" fill="var(--node-loss)" stroke="var(--border)"/>
+  <text x="220" y="82" text-anchor="middle" font-size="20" font-weight="700" fill="var(--danger)">FN</text>
+  <text x="220" y="98" text-anchor="middle" font-size="8" fill="var(--fg-dim)">Пропустил</text>
+  <text x="220" y="110" text-anchor="middle" font-size="8" fill="var(--fg-dim)">(не заметил)</text>
+
+  <rect x="80" y="130" width="90" height="70" rx="4" fill="var(--node-loss)" stroke="var(--border)"/>
+  <text x="125" y="157" text-anchor="middle" font-size="20" font-weight="700" fill="var(--danger)">FP</text>
+  <text x="125" y="173" text-anchor="middle" font-size="8" fill="var(--fg-dim)">Ложное</text>
+  <text x="125" y="185" text-anchor="middle" font-size="8" fill="var(--fg-dim)">срабатывание</text>
+
+  <rect x="175" y="130" width="90" height="70" rx="4" fill="var(--node-output)" stroke="var(--border)"/>
+  <text x="220" y="157" text-anchor="middle" font-size="20" font-weight="700" fill="var(--success)">TN</text>
+  <text x="220" y="173" text-anchor="middle" font-size="8" fill="var(--fg-dim)">Правильно</text>
+  <text x="220" y="185" text-anchor="middle" font-size="8" fill="var(--fg-dim)">отверг</text>
+
+  <text x="55" y="95" text-anchor="middle" font-size="9" font-weight="600" fill="var(--fg)" transform="rotate(-90, 55, 95)">Истинное</text>
+  <text x="180" y="230" text-anchor="middle" font-size="9" font-weight="600" fill="var(--fg)">Предсказанное</text>
+</svg>
+</div>
+
+<h3>Формулы метрик</h3>
+<div class="card">
+<table>
+  <tr><th>Метрика</th><th>Формула</th><th>Отвечает на вопрос</th><th>Наш результат</th></tr>
+  <tr>
+    <td><strong>Accuracy</strong></td>
+    <td><code>(TP+TN) / всего</code></td>
+    <td>Какую долю всех объектов угадали?</td>
+    <td>0.517</td>
+  </tr>
+  <tr>
+    <td><strong>Precision</strong></td>
+    <td><code>TP / (TP+FP)</code></td>
+    <td>Из тех, кого назвали «класс X» — сколько правда X?</td>
+    <td>0.514 (macro)</td>
+  </tr>
+  <tr>
+    <td><strong>Recall</strong></td>
+    <td><code>TP / (TP+FN)</code></td>
+    <td>Из реальных X — сколько модель нашла?</td>
+    <td>0.375 (macro)</td>
+  </tr>
+  <tr>
+    <td><strong>F1</strong></td>
+    <td><code>2·P·R / (P+R)</code></td>
+    <td>Баланс precision и recall</td>
+    <td>0.368 (macro)</td>
+  </tr>
+  <tr>
+    <td><strong>ROC AUC</strong></td>
+    <td>Площадь под ROC</td>
+    <td>Умеет ли модель ранжировать? (по вероятностям)</td>
+    <td>0.728</td>
+  </tr>
+</table>
+
+<div class="why-box">
+<strong>Почему F1 macro намного ниже Accuracy?</strong> Accuracy = 52%, но она считается по всем объектам. Модель хорошо предсказывает крупные классы (gas_giant: recall 68%, sub_neptune: recall 83%), но terrestrial_rocky: recall = 0%! Macro-усреднение даёт каждому классу одинаковый вес, поэтому F1 macro штрафует за провал на редких классах.
+</div>
+
+<div class="why-box">
+<strong>Почему ROC AUC (0.73) лучше Accuracy (0.52)?</strong> AUC оценивает вероятности, а не жёсткие предсказания. Модель может давать terrestrial_rocky повышенную (но не максимальную) вероятность — argmax выберет другой класс, accuracy упадёт, но AUC заметит, что модель «видит» паттерн.
+</div>
+</div>
+
+<h3>Код оценки на тестовой выборке — разбор</h3>
+<div class="card">
+<pre>def evaluate_model(model, test_loader):
+    model.eval()                                # dropout OFF, BN inference
+    all_preds, all_probs, all_labels = [], [], []
+
+    with torch.no_grad():
+        for xb, yb in test_loader:
+            logits = model(xb)                  # сырые оценки (5 чисел)
+            probs = torch.softmax(logits, dim=1).numpy()  # → вероятности
+            preds = logits.argmax(dim=1).numpy()          # → номер класса
+            all_probs.append(probs)
+            all_preds.extend(preds)
+            all_labels.extend(yb.numpy())
+
+    return np.array(all_labels), np.array(all_preds), np.vstack(all_probs)</pre>
+<div class="why-box">
+<strong>Зачем softmax здесь, если CrossEntropyLoss уже включает softmax?</strong> CrossEntropyLoss применяет softmax <em>внутри</em> себя при обучении. Но для ROC AUC нам нужны вероятности <em>отдельно</em>. Поэтому при инференсе мы вычисляем softmax вручную. Это не дублирование — это разные этапы.
+</div>
+<div class="why-box">
+<strong>argmax(dim=1) — что делает?</strong> Для каждого объекта в батче (dim=0 — объекты, dim=1 — классы) находит индекс максимального логита. Логиты = [2.1, 5.3, 0.8, -1.0, 0.3] → argmax = 1 → модель предсказывает класс №1 (sub_neptune_mini_gas).
+</div>
+</div>
+
+<h3>Как вызываются метрики sklearn</h3>
+<div class="card">
+<pre>y_true, y_pred, y_prob = evaluate_model(model, test_loader)
+
+accuracy_score(y_true, y_pred)                                    # 0.517
+precision_score(y_true, y_pred, average='macro')                  # 0.514
+recall_score(y_true, y_pred, average='macro')                     # 0.375
+f1_score(y_true, y_pred, average='macro')                         # 0.368
+roc_auc_score(y_true, y_prob, multi_class='ovr')                  # 0.728
+
+# classification_report — сводка по КАЖДОМУ классу отдельно
+print(classification_report(y_true, y_pred, target_names=le.classes_))</pre>
+<div class="tip-box">
+<strong>average='macro'</strong> — считает метрику для каждого из 5 классов отдельно, потом берёт обычное среднее. Все классы одинаково важны, независимо от размера. Альтернатива 'weighted' учитывает размер класса, но тогда редкие классы почти не влияют на итоговую метрику.
+</div>
+<div class="tip-box">
+<strong>multi_class='ovr'</strong> (one-vs-rest) — для каждого класса строится отдельная бинарная ROC-кривая: «этот класс vs все остальные». Потом AUC усредняется. Альтернатива 'ovo' (one-vs-one) считает попарно, но ovr стандартнее.
+</div>
+</div>
+
+<h3>Softmax и CrossEntropyLoss</h3>
+<div class="card">
+<div class="formula-box">
+<strong>Softmax</strong> — превращает логиты в вероятности:
+
+  логиты z = [2.1, 5.3, 0.8, -1.0, 0.3]
+
+               e^(zⱼ)                e^5.3
+  p(j) = ────────────── ,  p(2) = ────────────── = 0.82
+           Σ e^(zᵢ)               Σ e^(zᵢ)
+
+  вероятности = [0.04, 0.82, 0.03, 0.01, 0.10]  (сумма = 1)
+
+
+<strong>CrossEntropyLoss</strong> — штраф за неуверенность:
+
+  L = -log(p(y_true))
+
+  Если истинный класс = 2 (sub_neptune), p(2) = 0.82:
+  L = -log(0.82) = 0.20  (маленький штраф — модель уверена и права)
+
+  Если бы p(2) = 0.05:
+  L = -log(0.05) = 3.00  (большой штраф — модель ошиблась)
+</div>
+</div>
+
+
+<!-- ═══════════════ ARCHITECTURES ═══════════════ -->
+<h2 id="architectures">10. Сравнение архитектур</h2>
+
+<p>В секции 5 ноутбука мы систематически проверяем: как влияют глубина (число слоёв) и ширина (число нейронов в слое) на качество MLP.</p>
+
+<h3>Словарь архитектур — что мы тестируем</h3>
+<div class="card">
+<pre>ARCHITECTURES = {
+    'Shallow-Narrow [16]':          [16],               # 1 слой, 16 нейронов
+    'Shallow-Wide [128]':           [128],              # 1 слой, 128 нейронов
+    'Medium [64, 32]':              [64, 32],           # 2 слоя — наша базовая
+    'Deep-Narrow [32, 16, 8]':      [32, 16, 8],        # 3 слоя, узкие
+    'Deep-Wide [128, 64, 32]':      [128, 64, 32],      # 3 слоя, широкие
+    'Very Deep [64, 32, 16, 8, 4]': [64, 32, 16, 8, 4], # 5 слоёв
+}</pre>
+<div class="why-box">
+<strong>Зачем именно эти 6?</strong> Мы исследуем два измерения: <em>глубину</em> (1 → 2 → 3 → 5 слоёв) и <em>ширину</em> (16 → 64 → 128 нейронов). Это даёт сетку 2×2 (shallow/deep × narrow/wide) + Medium как baseline + Very Deep как экстремальный случай. Так мы видим, что важнее для задачи: глубина или ширина.
+</div>
+</div>
+
+<h3>Код эксперимента — построчный разбор</h3>
+<div class="card">
+<pre>results = {}
+
+for name, hidden in ARCHITECTURES.items():
+    # Фиксируем seed → каждая модель стартует с одинаковой инициализацией
+    torch.manual_seed(SEED)
+
+    # Создаём НОВУЮ модель с данной архитектурой
+    # MLP(4, [128, 64, 32]) → входной слой 4→128, скрытые 128→64, 64→32, выход 32→5
+    m = MLP(INPUT_DIM, hidden)
+
+    # Обучаем на тех же данных, с теми же гиперпараметрами (100 эпох, lr=0.001)
+    h = train_model(m, train_loader, val_loader, EPOCHS, LR)
+
+    # Оцениваем на ТЕСТОВОЙ выборке (которую модель не видела)
+    y_true_exp, y_pred_exp, y_prob_exp = evaluate_model(m, test_loader)
+
+    # Считаем 3 метрики
+    acc = accuracy_score(y_true_exp, y_pred_exp)
+    f1  = f1_score(y_true_exp, y_pred_exp, average='macro')
+    auc = roc_auc_score(y_true_exp, y_prob_exp, multi_class='ovr')
+
+    # Считаем общее число параметров модели
+    n_params = sum(p.numel() for p in m.parameters())
+
+    results[name] = {
+        'hidden': hidden, 'params': n_params,
+        'test_acc': acc, 'test_f1': f1, 'test_auc': auc,
+        'history': h   # кривые обучения для графиков
+    }</pre>
+<div class="why-box">
+<strong>Почему torch.manual_seed(SEED) перед каждой моделью?</strong> Инициализация весов случайна. Если не фиксировать seed, разница в результатах может быть от случайной инициализации, а не от архитектуры. Seed гарантирует: разница — только из-за архитектуры.
+</div>
+<div class="why-box">
+<strong>Что делает <code>sum(p.numel() for p in m.parameters())</code>?</strong> <code>m.parameters()</code> итерирует по всем обучаемым тензорам (W, b, γ, β). <code>p.numel()</code> — число элементов в тензоре. Для Linear(4→64): W имеет 4×64 = 256 элементов, b — 64. Сумма — общее число обучаемых параметров модели.
+</div>
+</div>
+
+<h3>Как считается число параметров для каждой архитектуры</h3>
+<div class="card">
+<table>
+  <tr><th>Архитектура</th><th>Слои</th><th>Расчёт параметров</th><th>Итого</th></tr>
+  <tr>
+    <td>[16]</td>
+    <td>4→16→5</td>
+    <td>Linear: (4×16+16) + (16×5+5) = 80+85 = 165<br>BatchNorm: 16×2 = 32</td>
+    <td>197</td>
+  </tr>
+  <tr>
+    <td>[128]</td>
+    <td>4→128→5</td>
+    <td>Linear: (4×128+128) + (128×5+5) = 640+645 = 1285<br>BN: 128×2 = 256</td>
+    <td>1 541</td>
+  </tr>
+  <tr style="background:var(--accent-light)">
+    <td><strong>[64, 32]</strong></td>
+    <td>4→64→32→5</td>
+    <td>Linear: (4×64+64) + (64×32+32) + (32×5+5) = 320+2080+165<br>BN: (64+32)×2 = 192</td>
+    <td><strong>2 757</strong></td>
+  </tr>
+  <tr>
+    <td>[32, 16, 8]</td>
+    <td>4→32→16→8→5</td>
+    <td>Linear: 160+528+136+45 = 869<br>BN: (32+16+8)×2 = 112</td>
+    <td>981</td>
+  </tr>
+  <tr>
+    <td>[128, 64, 32]</td>
+    <td>4→128→64→32→5</td>
+    <td>Linear: 640+8256+2080+165 = 11141<br>BN: (128+64+32)×2 = 448</td>
+    <td>11 589</td>
+  </tr>
+  <tr>
+    <td>[64,32,16,8,4]</td>
+    <td>4→64→32→16→8→4→5</td>
+    <td>Linear: 320+2080+528+136+36+25 = 3125<br>BN: (64+32+16+8+4)×2 = 248</td>
+    <td>3 373</td>
+  </tr>
+</table>
+<div class="tip-box">
+<strong>Формула для Linear(in, out):</strong> параметров = in × out + out. Первое слагаемое — матрица весов W, второе — вектор смещения b. Для BatchNorm1d(n): 2n параметров (γ и β — обучаемые масштаб и сдвиг).
+</div>
+</div>
+
+<h3>Результаты эксперимента</h3>
+<div class="card">
+<table>
+  <tr><th>Архитектура</th><th>Слоёв</th><th>Параметров</th><th>Accuracy</th><th>F1</th><th>AUC</th></tr>
+  <tr style="background:var(--accent-light)">
+    <td><strong>Medium [64, 32]</strong></td><td>2</td><td>2 757</td><td><strong>0.517</strong></td><td><strong>0.368</strong></td><td><strong>0.727</strong></td>
+  </tr>
+  <tr><td>Deep-Wide [128,64,32]</td><td>3</td><td>11 589</td><td>0.507</td><td>0.363</td><td>0.717</td></tr>
+  <tr><td>Deep-Narrow [32,16,8]</td><td>3</td><td>981</td><td>0.493</td><td>0.276</td><td>0.715</td></tr>
+  <tr><td>Shallow-Narrow [16]</td><td>1</td><td>197</td><td>0.488</td><td>0.363</td><td>0.716</td></tr>
+  <tr><td>Shallow-Wide [128]</td><td>1</td><td>1 541</td><td>0.488</td><td>0.359</td><td>0.715</td></tr>
+  <tr><td>Very Deep [64,32,16,8,4]</td><td>5</td><td>3 373</td><td>0.478</td><td>0.247</td><td>0.723</td></tr>
+</table>
+</div>
+
+<h3>Код визуализации кривых обучения</h3>
+<div class="card">
+<pre># Для каждой архитектуры строим подграфик loss vs epoch
+fig = make_subplots(rows=2, cols=3, subplot_titles=[
+    f'{name}&lt;br&gt;acc={results[name]["test_acc"]:.3f}'
+    for name in names_list
+])
+for i, name in enumerate(names_list):
+    row, col = i // 3 + 1, i % 3 + 1
+    h = results[name]['history']
+    epochs = list(range(1, len(h['train_loss']) + 1))
+    # Синяя — train loss, оранжевая — val loss
+    fig.add_trace(go.Scatter(x=epochs, y=h['train_loss'], name='Train'), ...)
+    fig.add_trace(go.Scatter(x=epochs, y=h['val_loss'], name='Validation'), ...)</pre>
+<div class="why-box">
+<strong>Как читать эти графики:</strong> Если train loss и val loss идут параллельно вниз — обучение нормальное. Если train loss падает, а val loss растёт — переобучение. Если обе кривые высоко и не снижаются — модель недообучена (мало ёмкости).
+</div>
+</div>
+
+<h3>Код сравнительного bar-chart</h3>
+<div class="card">
+<pre># Столбчатая диаграмма: Accuracy и F1 рядом для каждой архитектуры
+fig = go.Figure()
+fig.add_trace(go.Bar(
+    x=names,
+    y=[results[n]['test_acc'] for n in names],
+    name='Accuracy', marker_color='#3498db'
+))
+fig.add_trace(go.Bar(
+    x=names,
+    y=[results[n]['test_f1'] for n in names],
+    name='F1 (macro)', marker_color='#e67e22'
+))
+fig.update_layout(barmode='group')  # столбцы рядом, не стопкой</pre>
+<p><strong>Что видно на графике:</strong> F1 macro всегда ниже Accuracy. Это потому что macro считает среднее по всем классам одинаково, а модель плохо распознаёт редкие классы (terrestrial_rocky: F1 = 0).</p>
+</div>
+
+<h3>Выводы из эксперимента</h3>
+<div class="card">
+<svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0.5em auto">
+  <text x="350" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="var(--fg)">Глубина vs Ширина: что работает на малых данных (614 train)</text>
+
+  <rect x="30" y="40" width="200" height="55" rx="8" fill="var(--node-input)" stroke="var(--border)"/>
+  <text x="130" y="60" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">Мало слоёв [16] или [128]</text>
+  <text x="130" y="78" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Acc ~ 48.8%. Слишком мало</text>
+  <text x="130" y="90" text-anchor="middle" font-size="9" fill="var(--fg-dim)">ёмкости для 5 классов</text>
+
+  <rect x="250" y="40" width="200" height="55" rx="8" fill="var(--node-output)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="350" y="60" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">Medium [64, 32]</text>
+  <text x="350" y="78" text-anchor="middle" font-size="9" fill="var(--accent)">Лучший! Acc = 51.7%</text>
+  <text x="350" y="90" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Баланс ёмкости и данных</text>
+
+  <rect x="470" y="40" width="200" height="55" rx="8" fill="var(--node-loss)" stroke="var(--border)"/>
+  <text x="570" y="60" text-anchor="middle" font-size="10" font-weight="600" fill="var(--fg)">Много слоёв [64,32,16,8,4]</text>
+  <text x="570" y="78" text-anchor="middle" font-size="9" fill="var(--fg-dim)">Acc = 47.8%. Слишком много</text>
+  <text x="570" y="90" text-anchor="middle" font-size="9" fill="var(--fg-dim)">параметров для 614 примеров</text>
+
+  <rect x="50" y="120" width="600" height="45" rx="8" fill="var(--accent-light)" stroke="var(--accent)"/>
+  <text x="350" y="140" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent)">Вывод: для малого датасета глубокие сети не помогают.</text>
+  <text x="350" y="155" text-anchor="middle" font-size="9" fill="var(--fg)">Больше параметров = больше данных нужно для обучения. 614 примеров → хватает на 2-3 слоя.</text>
+</svg>
+</div>
+
+<h3>Детальный анализ каждой архитектуры</h3>
+<div class="card">
+
+<details>
+<summary>Shallow-Narrow [16] — минимальная сеть</summary>
+<p><strong>Структура:</strong> 4 → 16 → 5. Всего 197 параметров.</p>
+<p><strong>Результат:</strong> Acc = 0.488, F1 = 0.363, AUC = 0.716</p>
+<p><strong>Анализ:</strong> 16 нейронов — слишком мало для захвата нелинейных границ между 5 классами. Модель фактически близка к линейному классификатору. Но F1 не самый низкий — потому что простая модель не страдает от переобучения и хотя бы стабильно предсказывает крупные классы.</p>
+</details>
+
+<details>
+<summary>Shallow-Wide [128] — широкая, но мелкая</summary>
+<p><strong>Структура:</strong> 4 → 128 → 5. Всего 1 541 параметров.</p>
+<p><strong>Результат:</strong> Acc = 0.488, F1 = 0.359, AUC = 0.715</p>
+<p><strong>Анализ:</strong> Один слой со 128 нейронами — много ёмкости, но только один уровень абстракции. Нет иерархии признаков. 128 нейронов для 4 входных признаков — избыток на одном слое. Результат не лучше [16] — глубина важнее ширины!</p>
+</details>
+
+<details>
+<summary>Medium [64, 32] — лучший результат</summary>
+<p><strong>Структура:</strong> 4 → 64 → 32 → 5. Всего 2 757 параметров.</p>
+<p><strong>Результат:</strong> Acc = 0.517, F1 = 0.368, AUC = 0.727</p>
+<p><strong>Анализ:</strong> Два слоя дают два уровня абстракции: первый извлекает базовые паттерны из 4 признаков, второй комбинирует их. Сужение 64→32 работает как информационное бутылочное горлышко (bottleneck) — заставляет сеть выделять только важные признаки. 2 757 параметров — это ~4.5 параметра на один обучающий пример (614), что даёт хороший баланс.</p>
+</details>
+
+<details>
+<summary>Deep-Narrow [32, 16, 8] — глубокая, но узкая</summary>
+<p><strong>Структура:</strong> 4 → 32 → 16 → 8 → 5. Всего 981 параметров.</p>
+<p><strong>Результат:</strong> Acc = 0.493, F1 = 0.276, AUC = 0.715</p>
+<p><strong>Анализ:</strong> F1 = 0.276 — самый низкий среди трёхслойных! Узкие слои (8 нейронов) создают «бутылочное горлышко» слишком рано. 8 нейронов перед 5 выходами — почти нет пространства для нелинейных комбинаций. Модель вынуждена терять информацию.</p>
+</details>
+
+<details>
+<summary>Deep-Wide [128, 64, 32] — много параметров</summary>
+<p><strong>Структура:</strong> 4 → 128 → 64 → 32 → 5. Всего 11 589 параметров.</p>
+<p><strong>Результат:</strong> Acc = 0.507, F1 = 0.363, AUC = 0.717</p>
+<p><strong>Анализ:</strong> 11 589 параметров на 614 примеров — 19 параметров на объект! Модель может запомнить обучающую выборку, вместо того чтобы обобщать. Dropout и BatchNorm помогают, но недостаточно. Accuracy почти как у Medium, но F1 чуть ниже.</p>
+</details>
+
+<details>
+<summary>Very Deep [64, 32, 16, 8, 4] — самая глубокая</summary>
+<p><strong>Структура:</strong> 4 → 64 → 32 → 16 → 8 → 4 → 5. Всего 3 373 параметров.</p>
+<p><strong>Результат:</strong> Acc = 0.478 (худший!), F1 = 0.247 (худший!), AUC = 0.723</p>
+<p><strong>Анализ:</strong> 5 слоёв — это чрезмерно для задачи с 4 входными признаками и 614 примерами. Каждый дополнительный слой добавляет нелинейность, но и усложняет оптимизацию. Слой [4] — всего 4 нейрона перед 5 выходами — жёсткое бутылочное горлышко, теряющее информацию. Интересно: AUC = 0.723 — неплохой! Модель «видит» паттерны (вероятности правильные), но argmax выбирает неверный класс.</p>
+</details>
+</div>
+
+<div class="why-box">
+<strong>Почему Deep-Wide (11 589 параметров) хуже Medium (2 757)?</strong> С 614 обучающими примерами на 11 589 параметров модель может «запомнить» данные вместо обобщения. Это называется <em>bias-variance tradeoff</em>: сложная модель = низкий bias, но высокий variance (чувствительна к конкретной выборке). Простая модель = высокий bias, низкий variance. Medium — оптимум.
+</div>
+
+<div class="why-box">
+<strong>Почему AUC у всех архитектур близкий (0.71–0.73), а Accuracy и F1 сильно различаются?</strong> AUC оценивает вероятности: модель даёт правильному классу повышенную (но не обязательно максимальную) вероятность. Accuracy считает только argmax — «кто первый». Все архитектуры примерно одинаково хорошо ранжируют классы, но различаются в точности «жёсткого» предсказания. Это значит, что задача ограничена не моделью, а данными.
+</div>
+
+<div class="tip-box">
+<strong>Правило для преподавателя:</strong> На малых данных (&lt;1000 примеров) 2-3 слоя обычно оптимальны. Глубокие сети (5+ слоёв) нужны для задач с тысячами/миллионами примеров и сложной иерархической структурой (изображения, текст). Для табличных данных с 4 признаками — «больше» не значит «лучше».
+</div>
+
+
+
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<h2 id="faq">11. Вопросы, которые может задать преподаватель</h2>
+
+<div class="card">
+
+<details>
+<summary>Зачем нужна функция активации? Что будет без неё?</summary>
+<p>Без функции активации каждый слой — линейная функция y = Wx + b. Композиция линейных функций = линейная функция: W₂(W₁x + b₁) + b₂ = W₂W₁x + W₂b₁ + b₂ = W'x + b'. То есть вся сеть из 100 слоёв эквивалентна одному линейному слою — бесполезна для нелинейных задач. Активация (ReLU, sigmoid) ломает эту линейность.</p>
+</details>
+
+<details>
+<summary>Почему на выходном слое нет ReLU / softmax?</summary>
+<p>PyTorch <code>CrossEntropyLoss</code> включает softmax внутри. Если добавить softmax явно — он применится дважды, и градиенты будут неправильными. Без ReLU, потому что логиты могут быть отрицательными — и это нормально (отрицательный логит = модель считает класс маловероятным).</p>
+</details>
+
+<details>
+<summary>Что такое BatchNorm и зачем он нужен?</summary>
+<p>BatchNorm нормализует выходы слоя по текущему мини-батчу: x_norm = (x - μ_batch) / σ_batch, потом масштабирует: y = γ·x_norm + β (γ и β — обучаемые). Зачем: 1) стабилизирует обучение — распределение активаций не «уплывает» между слоями (internal covariate shift); 2) позволяет использовать больший learning rate; 3) слегка регуляризирует (шум от мини-батча).</p>
+</details>
+
+<details>
+<summary>Зачем Dropout? Как он работает?</summary>
+<p>При обучении случайно обнуляет нейроны с вероятностью p=0.3. Каждый батч — разная маска. Это заставляет сеть распределять знания между нейронами (не полагаться на один). При eval() dropout выключен, но выходы масштабируются на (1-p), чтобы среднее значение совпадало.</p>
+</details>
+
+<details>
+<summary>Почему разделение данных именно 60/20/20?</summary>
+<p>Test (20%) — для честной финальной оценки. Val (20%) — для мониторинга переобучения и подбора гиперпараметров. Train (60%) — всё остальное. При 1024 объектах это 614/205/205. Пропорции стандартные для малых датасетов. При больших данных (>100K) можно 90/5/5.</p>
+</details>
+
+<details>
+<summary>Что значит stratify при split?</summary>
+<p>Сохраняет пропорции классов. Если super_jupiter = 5.5% в полном датасете, то и в train = 5.5%, и в test = 5.5%. Без stratify случайная выборка может дать 0% super_jupiter в тесте — и мы не сможем оценить модель на этом классе.</p>
+</details>
+
+<details>
+<summary>Почему StandardScaler.fit() только на train?</summary>
+<p>Data leakage. Если fit на всём датасете — среднее и std содержат информацию из тестовой выборки. Модель «подглядывает» в данные, которые должна видеть только при финальной оценке. На практике утечка через scaler обычно мала, но принцип строгий: train определяет всё.</p>
+</details>
+
+<details>
+<summary>Что такое мёртвые нейроны (dead neurons)?</summary>
+<p>Нейрон с ReLU, который всегда получает отрицательный вход. ReLU(-x) = 0, и градиент тоже 0. Нейрон перестаёт обучаться навсегда. Причина: слишком большой learning rate сдвигает bias так, что нейрон уходит в отрицательную зону. Решения: Leaky ReLU (малый, но ненулевой градиент при x&lt;0), BatchNorm (центрирует распределение), аккуратный выбор lr.</p>
+</details>
+
+<details>
+<summary>Почему accuracy невысокий (52%)?</summary>
+<p>1) PCA показывает: классы сильно перекрываются — объективно сложная задача. 2) Только 4 признака — мало информации для различения 5 классов. 3) Малый датасет (614 train). 4) Дисбаланс: 56 super_jupiter vs 330 sub_neptune. При случайном угадывании (всегда предсказывать sub_neptune) accuracy = 32%. Наши 52% — заметно лучше случайного.</p>
+</details>
+
+<details>
+<summary>Как считается CrossEntropyLoss с vectorization?</summary>
+<p>Для батча из N объектов: L = -(1/N) · Σᵢ log(softmax(zᵢ)[yᵢ]), где zᵢ — логиты i-го объекта (вектор из 5), yᵢ — истинный класс. В матричной форме: P = softmax(Z) где Z ∈ ℝ^{N×5}, потом L = -(1/N) · Σᵢ log(P[i, yᵢ]). PyTorch делает это за одну операцию с numerical stability (log-sum-exp trick).</p>
+</details>
+
+<details>
+<summary>Зачем нужен PCA-график?</summary>
+<p>PCA (Principal Component Analysis) проецирует 4D-данные на 2D, сохраняя максимум дисперсии. Если на 2D-проекции классы хорошо разделяются — задача простая, даже линейная модель справится. Если перекрываются (как у нас) — задача сложная. PC1 объясняет наибольшую долю дисперсии, PC2 — вторую. Вместе они показывают «главные направления» в данных.</p>
+</details>
+
+</div>
+
+<div style="margin: 3em 0 2em; padding: 1.5em; border-radius: 10px; background: var(--accent-light); text-align: center;">
+  <p style="font-size: 1.1em; font-weight: 600; color: var(--accent); margin: 0">Удачи на защите!</p>
+  <p style="font-size: 0.85em; color: var(--fg-dim); margin: 0.5em 0 0">Главное — понимать <em>зачем</em> каждый шаг, а не просто <em>что</em> он делает</p>
+</div>
+
+<script>
+document.querySelectorAll('.nav-bar a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
