@@ -112,11 +112,12 @@ $$N=\left\lceil\frac{b-a}{\varepsilon}\right\rceil=500000$$
 
 ## 6. Запуск программы
 
-Требуется Python 3 с библиотеками из `requirements.txt`. Из корня репозитория:
+Программная реализация с пояснениями, графиками и результатами находится в [lab1.ipynb](lab1.ipynb). Откройте ноутбук в Jupyter или VS Code и выполните все ячейки сверху вниз (Run All).
+
+Для установки зависимостей из корня репозитория:
 
 ```sh
 python3 -m pip install -r optimization-methods/lab1/requirements.txt
-python3 optimization-methods/lab1/main.py
 ```
 
-Программа печатает таблицу и сохраняет `results.md`, `results.csv`, `function_plot.png`, `comparison.png` рядом с `main.py`, независимо от текущей рабочей папки. Аналитическое исследование приведено в этом отчёте.
+В ноутбуке используются обычные функции и циклы, без классов. Результаты и графики выводятся прямо под ячейками.
