@@ -5,15 +5,14 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
-// typedef HANDLE ProcessHandle;: В Windows идентификатор процесса называется HANDLE (это специальный указатель).
-//  Команда typedef создает «псевдоним»: теперь везде в проекте мы можем называть этот тип коротко — ProcessHandle.
+
 typedef HANDLE ProcessHandle;
+
 #else
 #include <sys/types.h>
 typedef pid_t ProcessHandle;
 #endif
 
-// Структурная обертка над запуском фонового процесса
 struct ProcessInfo
 {
     ProcessHandle handle;
@@ -35,4 +34,4 @@ ProcessInfo run_in_background(const std::string &command_line);
  */
 bool wait_for_process(ProcessInfo &info, int &exit_code);
 
-#endif // PROCESS_RUNNER_H
+#endif 
