@@ -3,6 +3,8 @@
 #include <vector>
 #include <sstream>
 
+using namespace std;
+
 ProcessInfo run_in_background(const std::string &command_line)
 {
     ProcessInfo info;
@@ -17,7 +19,7 @@ ProcessInfo run_in_background(const std::string &command_line)
     ZeroMemory(&pi, sizeof(pi));
 
     // Создаем копию строки, так как CreateProcessA может изменять входную строку
-    std::vector<char> cmd(command_line.begin(), command_line.end());
+    vector<char> cmd(command_line.begin(), command_line.end());
     cmd.push_back('\0');
 
     BOOL success = CreateProcessA(
@@ -40,7 +42,7 @@ ProcessInfo run_in_background(const std::string &command_line)
     }
     else
     {
-        std::cerr << "[WinAPI Error] Не удалось создать процесс. Код: " << GetLastError() << std::endl;
+        cerr << "[WinAPI Error] Не удалось создать процесс. Код: " << GetLastError() << endl;
     }
 
     return info;

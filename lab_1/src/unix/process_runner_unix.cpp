@@ -4,6 +4,8 @@
 #include <sys/wait.h>
 #include <cstdlib>
 
+using namespace std;
+
 ProcessInfo run_in_background(const std::string &command_line)
 {
     ProcessInfo info;
@@ -14,7 +16,7 @@ ProcessInfo run_in_background(const std::string &command_line)
 
     if (pid < 0)
     {
-        std::cerr << "[POSIX Error] Ошибка вызова fork()" << std::endl;
+        cerr << "[POSIX Error] Ошибка вызова fork()" << endl;
         return info;
     }
 
