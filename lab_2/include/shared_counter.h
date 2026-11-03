@@ -16,7 +16,7 @@
 struct SharedData
 {
     long long counter;
-
+    long long leader_pid;   // PID лидера; 0 = лидера нет
 };
 
 class SharedCounter
@@ -46,6 +46,9 @@ public:
         unlock();
         return v;
     }
+
+    
+    bool try_become_leader(long long my_pid);
 
 private:
     void lock();    

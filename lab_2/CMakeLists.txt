@@ -22,12 +22,14 @@ if(WIN32)
     add_library(os_time STATIC
         src/windows/time_win.cpp
         src/windows/logger_win.cpp
-        src/windows/shared_counter_win.cpp)
+        src/windows/shared_counter_win.cpp
+        src/windows/child_process_win.cpp)
 else()
     add_library(os_time STATIC
         src/unix/time_unix.cpp
         src/unix/logger_unix.cpp
-        src/unix/shared_counter_unix.cpp)
+        src/unix/shared_counter_unix.cpp
+        src/unix/child_process_unix.cpp)
 endif()
 
 # Заголовки библиотеки лежат в include/. PUBLIC -> их увидит и тест.

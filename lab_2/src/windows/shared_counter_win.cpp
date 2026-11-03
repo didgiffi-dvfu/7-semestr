@@ -65,6 +65,7 @@ bool SharedCounter::open(const std::string &name)
     {
         lock();
         data_->counter = 0;
+        data_->leader_pid = 0;
         unlock();
     }
 
@@ -80,6 +81,33 @@ void SharedCounter::lock()
 void SharedCounter::unlock()
 {
     ReleaseMutex(mutex_handle_);  // отпустить мьютекс
+}
+
+static bool process_alive(long long pid)
+{
+    if (pid <= 0) return false;
+    HANDLE h = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, (DWORD)pid);
+    if (h == NULL) return false;        
+    DWORD code = 0;
+    bool alive = false;
+    if (GetExitCodeProcess(h, &code))
+        alive = (code == STILL_ACTIVE);
+    CloseHandle(h);
+    return alive;
+}
+
+bool SharedCounter::try_become_leader(long long my_pid)
+{
+    if (!open_) return false;
+    lock();
+    long long cur = data_->leader_pid;
+    if (cur == 0 || !process_alive(cur))
+    {
+        data_->leader_pid = my_pid;
+    }
+    bool iam = (data_->leader_pid == my_pid);
+    unlock();
+    return iam;
 }
 
 void SharedCounter::close()
