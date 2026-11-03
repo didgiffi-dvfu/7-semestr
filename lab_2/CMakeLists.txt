@@ -20,9 +20,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # иначе строки ниже (include/link) ссылались бы на несуществующую цель.
 
 if(WIN32)
-    add_library(os_time STATIC src/windows/time_win.cpp)
+    add_library(os_time STATIC src/windows/time_win.cpp src/windows/logger_win.cpp)
 else()
-    add_library(os_time STATIC src/unix/time_unix.cpp)
+    add_library(os_time STATIC src/unix/time_unix.cpp src/unix/logger_unix.cpp)
+        
 endif()
 
 # Заголовки библиотеки лежат в include/. PUBLIC -> их увидит и тест.

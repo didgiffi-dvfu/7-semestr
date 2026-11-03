@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <ostream>
 #include <thread>
 // переменная которую можно безопастно читать и писать из разных потоков
 #include <atomic>
