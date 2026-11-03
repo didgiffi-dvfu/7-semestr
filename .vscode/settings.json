@@ -1,7 +1,18 @@
 {
-  "cmake.sourceDirectory": "C:/Study/7-semestr/${workspaceFolder}",
-    "cmake.buildDirectory": "${workspaceFolder}/build",
-    "cmake.configureOnOpen": true,
+    // Список всех проектов репозитория. CMake Tools покажет внизу переключатель
+    // "активного проекта" — выбираешь, какую лабу собирать.
+    // Для новой лабы просто добавь сюда строку "${workspaceFolder}/lab_4" и т.д.
+    "cmake.sourceDirectory": [
+        "${workspaceFolder}/lab_0",
+        "${workspaceFolder}/lab_1",
+        "${workspaceFolder}/lab_2"
+    ],
+
+    // Каждая лаба собирается в СВОЮ папку build внутри неё (не общую!),
+    // поэтому проекты не конфликтуют за один кэш.
+    "cmake.buildDirectory": "${sourceDirectory}/build",
+
+    "cmake.configureOnOpen": false,
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "C_Cpp.default.cppStandard": "c++17"
 }
