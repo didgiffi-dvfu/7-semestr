@@ -13,21 +13,31 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # --- 1. БИБЛИОТЕКА os_time ---
-# CMake сам выбирает нужный платформенный файл модуля времени:
-#   src/windows/time_win.cpp   — реализация для Windows (WinAPI, GetLocalTime)
-#   src/unix/time_unix.cpp     — реализация для UNIX/Linux/macOS (gettimeofday)
-# ВАЖНО: имя библиотеки одинаковое в обеих ветках (os_time),
-# иначе строки ниже (include/link) ссылались бы на несуществующую цель.
+# Модули: время (time_*), логгер (logger_*), общий счётчик (shared_counter_*).
+#   Windows: WinAPI
+#   UNIX:    POSIX
+# Имя библиотеки одинаковое в обеих ветках (os_time).
 
 if(WIN32)
-    add_library(os_time STATIC src/windows/time_win.cpp src/windows/logger_win.cpp)
+    add_library(os_time STATIC
+        src/windows/time_win.cpp
+        src/windows/logger_win.cpp
+        src/windows/shared_counter_win.cpp)
 else()
-    add_library(os_time STATIC src/unix/time_unix.cpp src/unix/logger_unix.cpp)
-        
+    add_library(os_time STATIC
+        src/unix/time_unix.cpp
+        src/unix/logger_unix.cpp
+        src/unix/shared_counter_unix.cpp)
 endif()
 
 # Заголовки библиотеки лежат в include/. PUBLIC -> их увидит и тест.
 target_include_directories(os_time PUBLIC include)
+
+# На Linux функции shm_open()/sem_open() лежат в библиотеках rt и pthread —
+# их нужно явно слинковать (на macOS и Windows это не требуется).
+if(UNIX AND NOT APPLE)
+    target_link_libraries(os_time PUBLIC rt pthread)
+endif()
 
 # --- 2. ТЕСТОВАЯ УТИЛИТА ---
 # Исполняемый файл-тест, линкуется с библиотекой os_time.

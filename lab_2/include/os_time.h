@@ -3,7 +3,6 @@
 
 #include <string>
 #include <cstdio>
-using namespace std;
 
 struct TimePoint
 {
@@ -20,10 +19,10 @@ TimePoint date_time_now();
 
 unsigned long current_pid();
 
-inline string date_time_formatter(const TimePoint &t)
+inline std::string date_time_formatter(const TimePoint &t)
 {
     char buf[32];
-    snprintf(buf, sizeof(buf), "%04d-%02d-%02d %02d:%02d:%02d.%03d", t.year, t.month, t.day, t.hour, t.minute, t.second, t.millis);
-    return string(buf);
-};
+    std::snprintf(buf, sizeof(buf), "%04d-%02d-%02d %02d:%02d:%02d.%03d", t.year, t.month, t.day, t.hour, t.minute, t.second, t.millis);
+    return std::string(buf);
+}
 #endif

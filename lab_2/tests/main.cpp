@@ -1,36 +1,27 @@
 #include <iostream>
 #include <chrono>
-#include <ostream>
 #include <thread>
-// переменная которую можно безопастно читать и писать из разных потоков
 #include <atomic>
+#include <string>
+
 #include "os_time.h"
-#include "counter.h"
 #include "logger.h"
+#include "shared_counter.h"
 
 using namespace std;
 
-// void timer_loop(Counter &counter, int interval_ms, atomic<bool> &stop)
-// { // атомарное чтение
-//     while (!stop.load())
-//     {
-//         this_thread::sleep_for(chrono::milliseconds(interval_ms));
-//         counter.increment();
-//         cout << "Counter value: " << counter.get() << endl;
-//     }
-// }
+static const char *COUNTER_NAME = "lab2_counter";
 
-void ticker_300ms(Counter &counter, atomic<bool> &stop)
+void ticker_300ms(SharedCounter &counter, atomic<bool> &stop)
 {
     while (!stop.load())
     {
         this_thread::sleep_for(chrono::milliseconds(300));
-        counter.increment();
-        
+        counter.add(1);
     }
 }
 
-void logger_1s(Counter &counter, Logger &log, atomic<bool> &stop)
+void logger_1s(SharedCounter &counter, Logger &log, atomic<bool> &stop)
 {
     while (!stop.load())
     {
@@ -44,20 +35,25 @@ int main()
     Logger log;
     if (!log.open("lab_2.log"))
     {
-        cerr << "Log is not oper" << endl;
+        cerr << "Log open failed" << endl;
+        return 1;
+    }
+
+    SharedCounter counter;
+    if (!counter.open(COUNTER_NAME))
+    {
+        cerr << "Shared counter open failed" << endl;
         return 1;
     }
 
     log.log("START");
-    Counter counter;
-    atomic<bool> stop{false};
 
+    atomic<bool> stop{false};
     thread t1(ticker_300ms, ref(counter), ref(stop));
     thread t2(logger_1s, ref(counter), ref(log), ref(stop));
 
-    cout << "Wright number for counter, wridht \"q\" for exit " << endl;
+    cout << "Enter a number to set the counter, q to exit" << endl;
     string line;
-
     while (getline(cin, line))
     {
         if (line == "q" || line == "quit")
@@ -71,7 +67,7 @@ int main()
         }
         catch (...)
         {
-            cout << "Wright q or num" << endl;
+            cout << "Enter a number or q" << endl;
         }
     }
 
@@ -80,5 +76,6 @@ int main()
     t2.join();
 
     log.log("EXIT");
+    counter.close();
     return 0;
 }
