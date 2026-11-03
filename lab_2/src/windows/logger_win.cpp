@@ -49,8 +49,8 @@ void Logger::log(const string &message)
 
     string log_entry = "|| " + formatted_time + " || PID= " + to_string(current_pid()) + " || " + message + "\n";
 
-    DWORD bytes_written;
-    WriteFile(handle_, log_entry.c_str(), log_entry.size(), &bytes_written, NULL);
+    DWORD bytes_written = 0;
+    WriteFile(handle_, log_entry.c_str(), (DWORD)log_entry.size(), &bytes_written, NULL);
 }
 
 void Logger::close()
